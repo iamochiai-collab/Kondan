@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fdf7ef">
+<title>面談日程づくり｜家庭訪問・個別懇談の日程調整</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf7ef; --card:#fff; --ink:#3d3430; --sub:#857870; --line:#efe2d4; --pri:#ef8354; --pri-d:#d96b3c; --pri-l:#fff0e5;
+  --ok:#3a9a64; --ok-l:#e3f6ea; --ng:#d9534f; --ng-l:#fde6e4; --warn:#c27c12; --warn-l:#fff4dc; --hl:#fff176;
+  --r:18px;
+  font-family:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+  --doc:"UD デジタル 教科書体 NK-R","UD Digi Kyokasho NK-R","UD デジタル 教科書体 N-R","Yu Mincho","Hiragino Mincho ProN",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55;display:flex;flex-direction:column}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+mark{background:var(--hl);color:inherit;padding:0 1px}
+
+.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 18px;background:#fff;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:8px;margin-right:4px}
+.brand b{font-size:20px;letter-spacing:.04em;color:var(--pri-d)}
+.brand b::before{content:"🗓";margin-right:6px}
+.brand small{color:var(--sub);font-size:12px}
+.kindsw{display:flex;background:var(--bg);border-radius:999px;padding:3px}
+.kindsw button{border:0;background:none;padding:5px 14px;border-radius:999px;font-weight:700;color:var(--sub)}
+.kindsw button.on{background:var(--pri);color:#fff}
+.clsbtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;display:flex;gap:8px;align-items:center}
+.clsbtn small{color:var(--pri);font-weight:700}
+.tools{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.tools .btn{padding:5px 12px;font-size:13px}
+
+.steps{display:flex;gap:8px;padding:10px 18px;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+.steps button{flex:1;min-width:120px;border:1px solid var(--line);background:#fffaf5;border-radius:999px;padding:6px 8px;display:flex;align-items:center;gap:8px;white-space:nowrap;color:var(--sub)}
+.steps button i{font-style:normal;width:24px;height:24px;border-radius:50%;background:#f3e6da;display:grid;place-items:center;font-weight:700;flex:none}
+.steps button.on{border-color:var(--pri);background:var(--pri-l);color:var(--ink);font-weight:700}
+.steps button.on i{background:var(--pri);color:#fff}
+.steps button.done i{background:var(--ok);color:#fff}
+
+main{flex:1;overflow:auto;padding:16px}
+.page{max-width:1100px;margin:0 auto}
+.page.wide{max-width:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 0 #f3e8dc}
+h2{font-size:19px;margin:0 0 6px}
+h3{font-size:16px;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.hint{color:var(--sub);font-size:13px;margin:4px 0 10px}
+.empty{color:var(--sub);padding:18px;text-align:center;background:#fffaf5;border-radius:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+.foot{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.btn{border:1px solid #e6d5c4;background:#fff;border-radius:999px;padding:7px 16px;font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn:hover{border-color:var(--pri)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.pri:hover{background:var(--pri-d)}
+.btn.sm{padding:4px 11px;font-size:13px}
+.btn.danger{color:var(--ng)}
+.btn.on{background:var(--warn-l);border-color:var(--warn)}
+input[type=text],input[type=number],input[type=date],input[type=time],input[type=search],select,textarea{border:1px solid #e6d5c4;border-radius:10px;padding:6px 9px;background:#fff;max-width:100%}
+textarea{width:100%;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri-l);border-color:var(--pri)}
+label.chk{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.note{background:var(--pri-l);border-radius:14px;padding:10px 14px;font-size:13px;color:#8a4a24}
+.tag{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12px;font-weight:700}
+.tag.ok{background:var(--ok-l);color:var(--ok)}
+.tag.no{background:var(--warn-l);color:var(--warn)}
+.form{display:grid;grid-template-columns:140px 1fr;gap:10px 14px;align-items:center}
+.form>label{font-weight:700;font-size:14px}
+
+/* 1 */
+.nlist{display:grid;gap:4px}
+.nrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:3px 0;border-bottom:1px dashed #f3e8dc}
+.nrow .no{width:54px;text-align:center}
+.nrow .nm{width:180px}
+.stf{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+.stf button{border:1px solid #e6d5c4;background:#fff;border-radius:999px;padding:2px 10px;font-size:13px;color:#b5a89d;min-width:40px}
+.stf button.main{background:var(--hl);border-color:#e0c500;color:#5a4a00;font-weight:700}
+.stf button.sub{background:#fff3e9;border-color:var(--pri);color:var(--pri-d);font-weight:700}
+.icon{border:0;background:none;width:32px;height:32px;border-radius:8px;color:var(--sub);font-size:17px;flex:none}
+.icon:hover{background:var(--bg);color:var(--ng)}
+
+/* 2 */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:2px;background:#fff3e9;border:1px solid #f3d3bc;border-radius:999px;padding:2px 4px 2px 12px;font-weight:700;font-variant-numeric:tabular-nums}
+.chip button{border:0;background:none;color:var(--sub);border-radius:50%;width:24px;height:24px}
+.chip button:hover{background:#fff;color:var(--ng)}
+.dlist{display:flex;gap:8px;flex-wrap:wrap}
+.dlist .dd{display:flex;align-items:center;gap:4px;background:#fffaf5;border:1px solid var(--line);border-radius:12px;padding:4px 4px 4px 8px}
+.use{border-collapse:separate;border-spacing:3px}
+.use th{font-size:13px;padding:2px 8px;white-space:nowrap}
+.use td button{width:64px;height:30px;border-radius:9px;border:1px solid #bfe3cc;background:var(--ok-l);color:var(--ok);font-weight:700}
+.use td button.off{background:#f1ece6;border-color:#e2d8cd;color:#b5a89d}
+
+/* 3 */
+.split{display:grid;grid-template-columns:240px 1fr;gap:14px;align-items:start}
+.side{background:#fff;border:1px solid var(--line);border-radius:var(--r);max-height:calc(100vh - 190px);overflow:auto;position:sticky;top:0}
+.side .sh{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--sub);background:#fffaf5;position:sticky;top:0;z-index:1}
+.sitem{display:flex;width:100%;gap:6px;align-items:center;border:0;border-bottom:1px solid #f6eee6;background:#fff;padding:7px 10px;text-align:left}
+.sitem:hover{background:#fffaf5}
+.sitem.on{background:var(--pri-l);box-shadow:inset 3px 0 0 var(--pri)}
+.sitem .n{width:26px;color:var(--sub);font-size:12px;text-align:right;flex:none}
+.sitem .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sitem .when{font-size:12px;color:var(--sub);flex:none}
+.bdg{font-size:11px;padding:0 7px;border-radius:999px;background:#f3ece5;color:var(--sub);flex:none}
+.bdg.ok{background:var(--ok-l);color:var(--ok)}
+.bdg.sib{background:#efe6fb;color:#6b46a8}
+.wpanel{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 18px}
+.whead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.whead select{font-size:17px;font-weight:700;min-width:200px}
+.legend{display:flex;gap:10px;font-size:12px;color:var(--sub);flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:3px}
+.wgrid{display:grid;gap:3px;margin:10px 0;user-select:none;overflow-x:auto}
+.wgrid .ch{border:0;background:#fff3e9;border-radius:10px;padding:4px;font-weight:700;font-size:13px}
+.wgrid .rh{border:0;background:none;font-size:14px;text-align:right;padding:0 8px;font-weight:700;font-variant-numeric:tabular-nums}
+.wc{border:1px solid #bfe3cc;background:var(--ok-l);border-radius:10px;height:36px;font-weight:700;font-size:17px;color:var(--ok);touch-action:manipulation}
+.wc.x{background:var(--ng-l);border-color:#f2c4c4;color:var(--ng)}
+.wc.cl{background:#f1ece6;border-color:#e2d8cd;color:#b5a89d;cursor:default}
+.wc.sib{outline:2px dashed #8f6cc9;outline-offset:-4px}
+.wbar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;border-top:1px solid var(--line);padding-top:12px;margin-top:6px}
+.wb{display:flex;flex-direction:column;font-size:12px;color:var(--sub);gap:2px}
+.wpop{flex-direction:column;align-items:flex-start;gap:0;max-width:260px}
+.wpop span{font-size:12px;color:var(--sub);font-weight:400}
+.wpop b{font-size:13px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wpop.has{border-color:#b9a3e0;background:#faf7ff}
+.prog{display:flex;align-items:center;gap:10px;font-size:13px}
+.prog .bar{flex:1;height:8px;background:#f3e6da;border-radius:99px;overflow:hidden;min-width:80px;max-width:240px}
+.prog .bar i{display:block;height:100%;background:var(--ok)}
+.wtabs{display:flex;gap:6px;margin-bottom:12px}
+.wtabs button{border:1px solid #e6d5c4;background:#fff;border-radius:999px;padding:7px 18px;font-weight:700;color:var(--sub)}
+.wtabs button.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.aggwrap{overflow:auto;max-height:calc(100vh - 300px);margin-top:8px}
+table.agg{border-collapse:separate;border-spacing:2px;font-size:13px}
+.agg th,.agg td{white-space:nowrap}
+.agg thead th{position:sticky;background:#fff;z-index:2}
+.agg thead tr:first-child th{top:0;height:26px}
+.agg thead tr:nth-child(2) th{top:28px;font-size:11px;color:var(--sub);font-weight:400}
+.agg .dhd{background:#fff3e9;border-radius:8px}
+.agg .stk{position:sticky;left:0;background:#fff;z-index:1;text-align:left}
+.agg thead .stk{z-index:3}
+.agg .nmc{cursor:pointer;padding:0 8px;min-width:110px}
+.agg .nmc:hover{color:var(--pri-d);text-decoration:underline}
+.agg .nmc small{color:var(--sub);margin-right:4px}
+.agg .cnt{color:var(--sub);font-size:12px;text-align:center;padding:0 6px}
+.agg .c{width:34px;height:26px;border-radius:6px;text-align:center;cursor:pointer;font-weight:700;user-select:none}
+.agg .c.o{background:var(--ok-l);color:var(--ok)}
+.agg .c.x{background:var(--ng-l);color:var(--ng)}
+.agg .c.u{background:#f5f0ea;color:#c4b8ac}
+.agg .c.b{background:#f1ece6;color:#c4b8ac;cursor:default}
+.agg .dsep{border-left:4px solid #fff}
+.agg tfoot td{position:sticky;bottom:0;background:#fff;font-weight:700;text-align:center;font-size:12px}
+.agg tfoot .sum{border-radius:6px;height:26px}
+.agg tr.nd .nmc{color:#a99}
+
+/* 4 調整（見本と同じ形の表） */
+.ptools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.phint{background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 14px;font-size:13px;margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.psec{padding:6px 12px;font-size:12px;font-weight:700;color:var(--sub);background:#fff6ee}
+.psec.ok{color:var(--ok)}
+.ttwrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:10px}
+table.tt{border-collapse:collapse;min-width:100%}
+.tt th,.tt td{border:1px solid #d9cabb;padding:4px 6px;vertical-align:top}
+.tt thead th{background:#fff3e9;font-size:14px;text-align:center;position:sticky;top:-10px;z-index:2}
+.tt thead th small{display:block;font-weight:400;color:var(--sub);font-size:11px}
+.tt .tm{white-space:nowrap;font-size:16px;font-weight:700;text-align:left;background:#fffaf5;width:96px;font-variant-numeric:tabular-nums}
+.tt td{min-width:150px;height:62px;position:relative}
+.tt td.cl{background:repeating-linear-gradient(135deg,#f1ece6 0 4px,#faf7f3 4px 8px);color:#b5a89d;text-align:center;vertical-align:middle}
+.tt td.okcell{background:#eefaf2;box-shadow:inset 0 0 0 2px #7bc59a}
+.dec{display:flex;align-items:center;gap:4px;font-size:15px;font-weight:700;margin-bottom:3px;flex-wrap:wrap}
+.dec .nm{background:var(--hl);padding:0 4px;border-radius:3px}
+.dec.warn .nm{background:#ffd6d3;outline:2px solid var(--ng)}
+.dec .stx{font-weight:400;font-size:13px}
+.dec .mini{border:0;background:none;padding:0 3px;font-size:13px;color:var(--sub);border-radius:6px}
+.dec .mini:hover{background:#f6eee6;color:var(--ng)}
+.cont{font-size:13px;color:var(--sub)}
+.cands{display:flex;flex-wrap:wrap;gap:3px}
+.cand{border:1px solid #cfe7d7;background:#f5fbf7;border-radius:999px;padding:0 8px;font-size:12.5px;color:#2f6e4a}
+.cand:hover{border-color:var(--ok);background:var(--ok-l)}
+.cand.placed{color:#b2a69b;border-color:#eee4da;background:#fff;text-decoration:line-through}
+.cand.hl{box-shadow:0 0 0 2px var(--pri)}
+.plus{position:absolute;right:3px;bottom:3px;border:1px dashed #e0cdbb;background:#fff;border-radius:8px;width:24px;height:22px;color:var(--sub);font-size:13px;line-height:1;opacity:.55}
+.tt td:hover .plus{opacity:1}
+
+/* 5 出力 */
+.outgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.lform{display:grid;grid-template-columns:110px 1fr;gap:8px 12px;align-items:start}
+.lform>label{font-weight:700;font-size:14px;padding-top:6px}
+.lform input[type=text]{width:100%}
+.pvbox{background:#efe4d9;border-radius:14px;padding:12px;overflow:auto}
+.slip{width:342px;min-height:257px;background:#fff;border:1px solid #333;padding:8px 10px;font-family:var(--doc);font-size:15px;line-height:21px;margin:0 auto 10px;color:#000}
+.slip p{margin:0;white-space:pre-wrap}
+.slip .c{text-align:center;text-decoration:underline}
+.slip .r{text-align:right}
+.pvtt{background:#fff;padding:14px;font-family:var(--doc);color:#000;font-size:13px}
+.pvtt table{border-collapse:collapse;width:100%}
+.pvtt th,.pvtt td{border:1px solid #000;padding:3px 5px;font-weight:400}
+.pvtt th{font-size:15px}
+.pvtt td.t{font-size:15px;white-space:nowrap}
+
+#printView{position:fixed;inset:0;background:#e9e1d8;z-index:90;overflow:auto}
+.pvbar{position:sticky;top:0;z-index:2;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 18px;background:#fff;border-bottom:1px solid var(--line)}
+.a4{width:210mm;min-height:297mm;background:#fff;margin:14px auto;box-shadow:0 2px 10px rgba(0,0,0,.18);color:#000;font-family:var(--doc);position:relative}
+.a4.tt{padding:22mm 20mm 18mm;font-size:11pt}
+.a4.tt .hd{text-align:center;margin:0 0 2mm}
+.a4.tt .pd{margin:0 0 3mm}
+.a4 table.ttb{border-collapse:collapse;width:100%;table-layout:fixed}
+.ttb th,.ttb td{border:.75pt solid #000;padding:1mm 1.5mm;font-weight:400;vertical-align:middle}
+.ttb th{font-size:15pt;height:9mm;text-align:center}
+.ttb td.t{font-size:15pt;white-space:nowrap}
+.ttb td{font-size:10.5pt;height:10mm;line-height:1.4}
+.ttb .nw{white-space:nowrap}
+.ttb td.cl{background:#e7e6e6}
+.a4.slips{height:297mm;padding:12.7mm 12.7mm 0}
+table.slipt{border-collapse:collapse;width:100%;table-layout:fixed}
+.slipt td{border:1pt solid #000;height:66.5mm;vertical-align:top;padding:2mm 2.5mm;overflow:hidden}
+.slipt td p{margin:0;white-space:pre-wrap}
+.slipt td .c{text-align:center;text-decoration:underline}
+.slipt td .r{text-align:right}
+@media print{
+  @page{size:A4 portrait;margin:0}
+  html,body{height:auto;display:block;background:#fff}
+  body>*:not(#printView){display:none!important}
+  #printView{position:static;background:none;overflow:visible;display:block!important}
+  .pvbar{display:none!important}
+  .a4{margin:0;box-shadow:none;break-after:page;page-break-after:always}
+  .a4:last-child{break-after:auto;page-break-after:auto}
+}
+#modal{position:fixed;inset:0;background:rgba(60,40,30,.4);display:grid;place-items:center;z-index:100;padding:14px}
+.mbox{background:#fff;border-radius:20px;max-width:540px;width:100%;max-height:calc(100vh - 28px);display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.mbox.wide{max-width:780px}
+#mBody{padding:18px 20px;overflow:auto}
+#mBtns{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:6px 0;cursor:pointer}
+.opt:has(input:checked){border-color:var(--pri);background:var(--pri-l)}
+.opt small{display:block;color:var(--sub)}
+.pick{display:flex;flex-wrap:wrap;gap:6px}
+.pick button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 10px}
+.pick button.ok{border-color:#59b57d;background:var(--ok-l)}
+.pick button small{color:var(--sub);margin-left:4px}
+.sibrow{border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px;display:grid;gap:6px}
+.sibrow .row>span{font-size:13px;color:var(--sub)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#5a463b;color:#fff;padding:9px 18px;border-radius:999px;font-size:14px;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
+#toast.show{opacity:1}
+#busy{position:fixed;inset:0;background:rgba(255,255,255,.75);display:grid;place-items:center;z-index:150;font-weight:700;font-size:17px}
+footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
+@media (max-width:900px){
+  .split,.outgrid{grid-template-columns:1fr}
+  .side{position:static;max-height:260px}
+  .form{grid-template-columns:1fr}
+  .brand small{display:none}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><b>面談日程づくり</b><small>家庭訪問・個別懇談</small></div>
+  <div class="kindsw" id="kindSw"><button data-kind="talk">個別懇談</button><button data-kind="visit">家庭訪問</button></div>
+  <button class="clsbtn" data-go="1"><span id="clsTxt">クラス未設定</span><small>変える</small></button>
+  <div class="tools">
+    <button class="btn" id="undoBtn" title="ひとつ前にもどす">↶ もどす</button>
+    <button class="btn" id="redoBtn" title="ひとつ先にすすめる">↷ すすむ</button>
+    <button class="btn" id="fileBtn">保存・読み込み</button>
+  </div>
+</header>
+<nav class="steps" id="steps">
+  <button data-go="1"><i>1</i>名前と先生</button>
+  <button data-go="2"><i>2</i>日にちと時間帯</button>
+  <button data-go="3"><i>3</i>希望の入力</button>
+  <button data-go="4"><i>4</i>日程の調整</button>
+  <button data-go="5"><i>5</i>印刷・保存</button>
+</nav>
+
+<main id="main">
+<!-- 1 -->
+<section class="page" data-p="1">
+  <div class="card">
+    <h2>1. 名前と先生</h2>
+    <div class="form" style="margin-top:10px">
+      <label>クラス名</label><div class="row"><input type="text" id="clsIn" placeholder="例）高等部２組" style="width:220px"><span class="hint" style="margin:0">お知らせや日程表に「高等部２組　高橋様」のように入ります</span></div>
+      <label>先生の名前</label><div class="row"><input type="text" id="staffIn" placeholder="例）田中 佐藤 鈴木 山本" style="width:300px"><span class="hint" style="margin:0">名字だけでOK。空白か「・」で区切ります</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">名前の登録</h3>
+    <p class="hint">1行に1人ずつ入力して「まとめて追加」を押します。Excelから「番号」「名前」「先生（田中・佐藤）」の列をそのまま貼り付けることもできます。</p>
+    <textarea id="bulk" rows="5" placeholder="例）&#10;高橋	田中・佐藤&#10;伊藤	山本・佐藤&#10;渡辺	鈴木・田中"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button class="btn pri" id="bulkAdd">まとめて追加</button>
+      <button class="btn" id="oneAdd">1人追加</button>
+      <span class="sp"></span>
+      <button class="btn sm" id="renum">番号を1からふり直す</button>
+      <button class="btn sm danger" id="clearNames">全員消す</button>
+    </div>
+    <h3>登録した人 <span class="tag ok" id="nameCnt"></span></h3>
+    <p class="hint" id="stfHint" style="margin-top:-4px">先生の名前を押すと <mark>主に話す先生</mark> → <b style="color:var(--pri-d)">同席</b> → なし の順に変わります。</p>
+    <div class="nlist" id="nameList"></div>
+    <div class="foot"><button class="btn pri" data-go="2">次へ：日にちと時間帯 →</button></div>
+  </div>
+  <p class="note">入力した内容は、このブラウザの中に自動で保存されます（インターネットには送られません）。別のパソコンで続けるときは「保存・読み込み」でファイルにしてください。</p>
+</section>
+
+<!-- 2 -->
+<section class="page" data-p="2">
+  <div class="card">
+    <h2>2. 日にちと時間帯</h2>
+    <div class="form" style="margin-top:10px">
+      <label>題名</label><div class="row"><input type="text" id="titleIn" style="width:200px"><span class="hint" style="margin:0">「高等部２組　個別懇談について」「個別懇談の日時決定のお知らせ」のように入ります</span></div>
+    </div>
+    <h3>日にち</h3>
+    <div class="dlist" id="dayList"></div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="addDay">＋ 日にちを追加</button></div>
+    <h3>時間帯 <span class="hint" style="margin:0;font-weight:400">どの日も同じ時間帯を使います</span></h3>
+    <div class="chips" id="slotList"></div>
+    <div class="row" style="margin-top:10px">
+      <input type="time" id="slotIn" step="300" value="13:00"><button class="btn" id="addSlot">＋ 時間帯を追加</button>
+    </div>
+    <div class="row" style="margin-top:8px;font-size:14px">
+      <span>まとめて作る：</span><input type="time" id="genA" step="300" value="13:00"><span>から</span><input type="time" id="genB" step="300" value="16:30"><span>まで</span>
+      <select id="genStep"><option>10</option><option>15</option><option>20</option><option selected>30</option><option>40</option><option>45</option><option>60</option></select><span>分ごと</span>
+      <button class="btn sm" id="genSlots">追加する</button><button class="btn sm danger" id="clearSlots">時間帯を全部消す</button>
+    </div>
+    <h3>使わない時間 <span class="hint" style="margin:0;font-weight:400">会議などで入れない時間を「ー」にします</span></h3>
+    <div style="overflow-x:auto" id="useTab"></div>
+    <div class="foot"><button class="btn" data-go="1">← もどる</button><button class="btn pri" data-go="3">次へ：希望の入力 →</button></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="page wide" data-p="3">
+  <div id="wishEmpty"></div>
+  <div class="wtabs" id="wishTabs"><button data-wv="one">1人ずつ入力</button><button data-wv="all">全員の○×</button></div>
+  <div id="wishAll" class="card"></div>
+  <div class="split" id="wishSplit">
+    <div class="side"><div class="sh" id="wishProg"></div><div id="wishList"></div></div>
+    <div>
+      <div class="wpanel" id="wishMain"></div>
+      <div class="foot"><button class="btn" data-go="2">← もどる</button><button class="btn pri" data-go="4">次へ：日程の調整 →</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="page wide" data-p="4">
+  <div class="ptools">
+    <button class="btn pri" id="autoBtn">⚡ 自動で入れる</button>
+    <button class="btn" id="clearBtn">自動で入れた分をはずす</button>
+    <button class="btn danger" id="clearAllBtn">ぜんぶはずす</button>
+    <span class="sp"></span>
+    <div id="planProg" class="prog"></div>
+    <button class="btn pri" data-go="5">印刷・保存へ →</button>
+  </div>
+  <div class="phint" id="planHint"></div>
+  <div class="split">
+    <div class="side" id="planList"></div>
+    <div class="ttwrap" id="planGrid"></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="page wide" data-p="5">
+  <div class="outgrid">
+    <div class="card">
+      <h2>日程表と希望の集約表</h2>
+      <p class="hint">1ページ目に決まった日程表（名前と同席する先生）、2ページ目に希望の集約表（○の人の名前、決まった人は黄色）が入ります。印刷ページでは、印刷の画面で「PDFに保存」も選べます。</p>
+      <div class="btns row"><button class="btn pri" data-out="ttPrint">🖨 印刷ページを開く</button><button class="btn" data-out="ttPdf">PDFで保存</button><span class="sp"></span><button class="btn sm" data-out="ttDocx">Word</button><button class="btn sm" data-out="xlsx">Excel</button></div>
+      <h3>見本（1ページ目）</h3>
+      <div class="pvbox"><div class="pvtt" id="pvTT"></div></div>
+    </div>
+    <div class="card">
+      <h2>保護者へのお知らせ（連絡帳用）</h2>
+      <p class="hint">A4に8人分（2列×4段）。切って連絡帳に貼ります。</p>
+      <div class="row"><button class="btn pri" data-out="slipPrint">🖨 印刷ページを開く</button><button class="btn" data-out="slipPdf">PDFで保存</button><button class="btn sm" data-out="slipDocx">Word</button></div><div class="row" style="margin-top:8px"><label class="chk"><input type="checkbox" id="lAll">日時がまだの人の分も作る（日時は空らん）</label></div>
+      <p class="hint" id="letterCount"></p>
+      <h3>文面</h3>
+      <div class="lform" id="lform">
+        <label>宛名</label><div><input type="text" data-l="to"></div>
+        <label>題名</label><div><input type="text" data-l="title"></div>
+        <label>差出人</label><div><input type="text" data-l="from"></div>
+        <label>本文</label><div><textarea data-l="body" rows="4"></textarea></div>
+        <label>日時の行</label><div><input type="text" data-l="when"></div>
+        <label>字体</label><div class="row"><select data-l="font"><option>UD デジタル 教科書体 NK-R</option><option>UD デジタル 教科書体 N-R</option><option>HG丸ｺﾞｼｯｸM-PRO</option><option>ＭＳ 明朝</option><option>ＭＳ ゴシック</option><option>游明朝</option><option>游ゴシック</option></select>
+          <select data-l="size"><option value="11">11pt</option><option value="12">12pt</option><option value="13">13pt</option></select></div>
+        <label></label><div><p class="hint" style="margin:0"><code>{クラス}</code> <code>{名前}</code> <code>{題名}</code> <code>{日付}</code>＝８月３１日（月） <code>{開始}</code>＝１３：３０ <code>{番号}</code> が入ります。</p>
+          <button class="btn sm danger" id="resetLetter" style="margin-top:6px">最初の文面にもどす</button></div>
+      </div>
+      <h3>見本</h3>
+      <div class="pvbox" id="pvSlip"></div>
+    </div>
+  </div>
+  <div class="foot"><button class="btn" data-go="4">← もどる</button></div>
+</section>
+</main>
+<footer>面談日程づくり ｜ データはこのブラウザの中だけに保存されます</footer>
+
+<div id="modal" hidden><div class="mbox"><div id="mBody"></div><div id="mBtns"></div></div></div>
+<div id="printView" hidden>
+  <div class="pvbar"><button class="btn" id="pvBack">← もどる</button><b id="pvTitle"></b><span class="sp"></span><span class="hint" id="pvNote" style="margin:0"></span><button class="btn pri" id="pvPrint">🖨 印刷する</button><button class="btn" id="pvPdf">PDFで保存</button></div>
+  <div id="pvPages"></div>
+</div>
+<div id="toast"></div>
+<div id="busy" hidden></div>
+<input type="file" id="dataFile" accept=".json,application/json" hidden>
+
+<script>
+'use strict';
+/* ========== 小さな道具 ========== */
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parseYmd = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? new Date(+m[1], m[2] - 1, +m[3]) : null; };
+const WD = '日月火水木金土';
+const dayLabel = s => { const d = parseYmd(s); return d ? `${d.getMonth() + 1}/${d.getDate()}(${WD[d.getDay()]})` : '日にち未定'; };
+const toMin = t => { const m = /^(\d{1,2}):(\d{2})/.exec(t || ''); return m ? +m[1] * 60 + +m[2] : NaN; };
+const fmt = m => `${Math.floor(m / 60)}:${pad(m % 60)}`;
+const fmt2 = m => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+const toHalf = s => String(s || '').replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+const zen = s => String(s).replace(/[0-9]/g, c => String.fromCharCode(c.charCodeAt(0) + 0xFEE0));
+const tLabel = t => fmt(toMin(t));                       // 13:30
+const tDoc = t => { const m = toMin(t); return `${Math.floor(m / 60)}：${pad(m % 60)}`; };  // 13：30（見本の形）
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2400); }
+function busy(msg) { const b = $('#busy'); if (msg) { b.textContent = msg; b.hidden = false; } else b.hidden = true; }
+const pause = () => new Promise(r => setTimeout(r, 0));
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
+};
+function nextWeekday(t) { t = new Date(t); while (t.getDay() === 0 || t.getDay() === 6) t.setDate(t.getDate() + 1); return t; }
+const splitStaff = v => String(v || '').split(/[・,、，\s　/／]+/).map(x => x.trim()).filter(Boolean);
+
+/* ========== ダイアログ ========== */
+let MC = null;
+function dlg(html, btns, opt) {
+  btns = btns || [{ label: 'OK', cls: 'pri', value: true }]; opt = opt || {};
+  if (MC) closeDlg(null);
+  return new Promise(res => {
+    $('.mbox').className = 'mbox' + (opt.wide ? ' wide' : '');
+    $('#mBody').innerHTML = html;
+    $('#mBtns').innerHTML = btns.map((b, i) => `<button class="btn ${b.cls || ''}" data-mb="${i}">${esc(b.label)}</button>`).join('');
+    $('#modal').hidden = false; MC = { res, btns, opt };
+  });
+}
+function closeDlg(v) { const c = MC; MC = null; $('#modal').hidden = true; $('#mBody').innerHTML = ''; if (c) c.res(v); }
+$('#modal').addEventListener('click', e => {
+  if (!MC) return;
+  if (e.target.id === 'modal') { closeDlg(null); return; }
+  const b = e.target.closest('[data-mb]');
+  if (b) { const d = MC.btns[+b.dataset.mb]; closeDlg(typeof d.value === 'function' ? d.value() : d.value); return; }
+  if (MC.opt.onClick) MC.opt.onClick(e);
+});
+$('#modal').addEventListener('change', e => { if (MC && MC.opt.onChange) MC.opt.onChange(e); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && MC) closeDlg(null); });
+const confirmDlg = (html, ok, danger) => dlg(html, [{ label: 'やめる', value: false }, { label: ok || 'OK', cls: danger ? 'pri danger' : 'pri', value: true }]);
+
+/* ========== データ ========== */
+const KEY = 'mendanZukuri.v3', PKEY = 'mendanZukuri.prof3';
+const TITLE = { talk: '個別懇談', visit: '家庭訪問' };
+function defState() {
+  const t = new Date(); t.setDate(t.getDate() + 7);
+  return { kind: 'talk', title: '個別懇談', days: [{ id: uid(), date: ymd(nextWeekday(t)) }],
+    slots: ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00'], closed: {}, students: [], assign: {}, pref: { days: '', gap: '' }, letterAll: false };
+}
+const normSlots = a => [...new Set((a || []).map(t => { const m = toMin(t); return isNaN(m) ? null : fmt2(m); }).filter(Boolean))].sort((x, y) => toMin(x) - toMin(y));
+function norm(o) {
+  const s = Object.assign(defState(), o && typeof o === 'object' ? o : {});
+  s.days = (Array.isArray(s.days) ? s.days : []).filter(x => x && x.id).map(x => ({ id: x.id, date: x.date || '' }));
+  s.slots = normSlots(s.slots);
+  ['closed', 'assign'].forEach(k => { if (!s[k] || typeof s[k] !== 'object') s[k] = {}; });
+  s.students = (Array.isArray(s.students) ? s.students : []).filter(x => x && x.id).map(x => Object.assign({ no: '', name: '', staff: [], mult: 1, ng: {}, sibs: [], pair: '', done: false }, x));
+  s.students.forEach(x => { if (!x.ng || typeof x.ng !== 'object') x.ng = {}; if (!Array.isArray(x.sibs)) x.sibs = []; if (!Array.isArray(x.staff)) x.staff = splitStaff(x.staff); });
+  if (!s.pref || typeof s.pref !== 'object') s.pref = { days: '', gap: '' };
+  return s;
+}
+const LDEF = {
+  to: '{クラス}　{名前}様', title: '{題名}の日時決定のお知らせ', from: '{クラス}担任',
+  body: '　いつも本学級へのご理解・ご協力をいただき、ありがとうございます。\n　{題名}の日時が決定しましたので、お伝えします。お忙しい中恐れ入りますが、よろしくお願いいたします。',
+  when: '日　時：{日付}　{開始}～', font: 'UD デジタル 教科書体 NK-R', size: 12
+};
+function normProf(o) { const p = Object.assign({ cls: '', staff: [], letter: {} }, o && typeof o === 'object' ? o : {}); if (!Array.isArray(p.staff)) p.staff = splitStaff(p.staff); if (!p.letter || typeof p.letter !== 'object') p.letter = {}; return p; }
+let S = norm(store.get(KEY)), P = normProf(store.get(PKEY));
+let hist = [], fut = [], lastSnap = JSON.stringify(S);
+const persist = () => store.set(KEY, S), saveP = () => store.set(PKEY, P);
+function save() {
+  reindex(); persist();
+  const j = JSON.stringify(S);
+  if (j !== lastSnap) { hist.push(lastSnap); if (hist.length > 80) hist.shift(); fut = []; lastSnap = j; }
+  updHist();
+}
+function updHist() { $('#undoBtn').disabled = !hist.length; $('#redoBtn').disabled = !fut.length; }
+function jump(dir) {
+  const from = dir < 0 ? hist : fut, to = dir < 0 ? fut : hist; if (!from.length) return;
+  to.push(lastSnap); lastSnap = from.pop(); S = norm(JSON.parse(lastSnap)); persist();
+  selId = null; render(); updHist(); toast(dir < 0 ? 'ひとつ前にもどしました' : 'ひとつ先にすすめました');
+}
+let SB = {}, DB = {};
+function reindex() {
+  SB = {}; DB = {};
+  S.students.forEach(s => SB[s.id] = s); S.days.forEach(d => DB[d.id] = d);
+  for (const id in S.assign) { const a = S.assign[id]; if (!SB[id] || !DB[a.dayId] || S.slots.indexOf(a.t) < 0) delete S.assign[id]; }
+  S.students.forEach(s => { if (s.pair && !SB[s.pair]) s.pair = ''; });
+}
+reindex();
+
+/* ========== 時間帯 ========== */
+const NS = () => S.slots.length;
+const K = (dayId, t) => dayId + '|' + t;
+const kw = () => S.kind === 'visit' ? '訪問' : '懇談';
+const multOf = s => Math.max(1, Math.min(3, parseInt(s.mult, 10) || 1));
+const aIdx = a => S.slots.indexOf(a.t);
+const isClosed = (dayId, t) => !!S.closed[K(dayId, t)];
+const daysOrdered = () => S.days;
+function slotsOf(s, i) { const r = []; for (let k = i; k < Math.min(i + multOf(s), NS()); k++) r.push(k); return r; }
+const REASON = { range: '時間帯がない', over: 'あとの時間帯が足りない', closed: '使わない時間', ng: '保護者の都合が×', sib: 'きょうだいの' + '時間と同じ', overlap: 'ほかの人と重なる' };
+function check(s, d, i) {
+  if (i < 0 || i >= NS()) return 'range';
+  if (i + multOf(s) > NS()) return 'over';
+  for (let k = i; k < i + multOf(s); k++) {
+    const t = S.slots[k];
+    if (isClosed(d.id, t)) return 'closed';
+    if (s.done && s.ng[K(d.id, t)]) return 'ng';
+    if (s.sibs.some(b => b.dayId === d.id && b.t === t)) return 'sib';
+  }
+  return '';
+}
+function occMap() { const o = {}; for (const id in S.assign) { const a = S.assign[id], s = SB[id]; if (!s) continue; slotsOf(s, aIdx(a)).forEach((k, j) => (o[K(a.dayId, k)] || (o[K(a.dayId, k)] = [])).push({ id, first: j === 0 })); } return o; }
+function freeAt(s, d, i, ignore) { const o = occMap(); return slotsOf(s, i).every(k => (o[K(d.id, k)] || []).every(x => x.id === s.id || (ignore && ignore.includes(x.id)))); }
+function problemsOf(id) { const a = S.assign[id], s = SB[id], d = a && DB[a.dayId]; if (!d) return []; const r = [], c = check(s, d, aIdx(a)); if (c) r.push(REASON[c]); if (!freeAt(s, d, aIdx(a))) r.push(REASON.overlap); return r; }
+const dayCount = dayId => Object.values(S.assign).filter(a => a.dayId === dayId).length;
+const byNo = (x, y) => (parseInt(toHalf(x.no), 10) || 9999) - (parseInt(toHalf(y.no), 10) || 9999);
+function whenShort(s) { const a = S.assign[s.id], d = a && DB[a.dayId]; return d ? `${dayLabel(d.date)} ${tLabel(a.t)}～` : '未定'; }
+function staffText(s) { return s.staff.length ? `（${s.staff.join('・')}）` : ''; }
+function staffHtml(s) { return s.staff.length ? `（${s.staff.map((x, i) => i ? esc(x) : `<mark>${esc(x)}</mark>`).join('・')}）` : ''; }
+function nearIdx(t) { const m = toMin(t); let b = -1, bd = 1e9; S.slots.forEach((x, i) => { const dd = Math.abs(toMin(x) - m); if (dd < bd) { bd = dd; b = i; } }); return b; }
+function sibText(b) { return ([b.cls, b.rel].filter(Boolean).join(' ') || 'きょうだい') + (b.t && DB[b.dayId] ? `（${dayLabel(DB[b.dayId].date)} ${tLabel(b.t)}～）` : ''); }
+function sibShort(s) { const o = s.sibs.map(b => [b.cls, b.rel].filter(Boolean).join(' ') || 'ほかのクラス'); if (s.pair && SB[s.pair]) o.push(SB[s.pair].name || 'このクラス'); return o.join('、'); }
+
+/* ========== 自動で入れる ========== */
+function cost(asg) {
+  let c = 0; const byDay = {};
+  for (const id in asg) {
+    const a = asg[id], s = SB[id]; if (!s) continue; const n = multOf(s);
+    (byDay[a.dayId] || (byDay[a.dayId] = [])).push({ i: a.idx, n });
+    c += a.idx * 0.001;
+    for (const b of s.sibs) {   // ほかのクラスのきょうだい：同じ日のとなりの時間帯に
+      if (!b.t || !DB[b.dayId]) continue;
+      if (b.dayId !== a.dayId) c += 50;
+      else { const bi = nearIdx(b.t), gap = Math.max(a.idx - bi, bi - (a.idx + n - 1)) - 1; c += Math.max(0, gap) * 2; }
+    }
+    if (s.pair && asg[s.pair] && id < s.pair) {   // このクラスのきょうだい：同じ日の続きの時間帯に
+      const b = asg[s.pair], t = SB[s.pair];
+      if (t) { if (b.dayId !== a.dayId) c += 50; else c += Math.max(0, b.idx - (a.idx + n), a.idx - (b.idx + multOf(t))) * 4; }
+    }
+  }
+  const pref = S.pref || {}, ids = Object.keys(byDay);
+  if (pref.days === 'even' && S.days.length) {
+    let tot = 0; ids.forEach(k => tot += byDay[k].length); const avg = tot / S.days.length;
+    S.days.forEach(d => { const k = byDay[d.id] ? byDay[d.id].length : 0; c += (k - avg) * (k - avg) * 3; });
+  } else if (pref.days === 'pack') { c += ids.length * 30; S.days.forEach((d, k) => { if (byDay[d.id]) c += byDay[d.id].length * k * 0.3; }); }
+  for (const k of ids) {
+    const arr = byDay[k].sort((x, y) => x.i - y.i);
+    for (let q = 1; q < arr.length; q++) { const idle = arr[q].i - (arr[q - 1].i + arr[q - 1].n); if (pref.gap === 'tight') c += Math.max(0, idle) * 3; else if (pref.gap === 'spread' && idle <= 0) c += 5; }
+  }
+  return c;
+}
+function solve() {
+  reindex();
+  const fixed = {};
+  for (const id in S.assign) if (S.assign[id].lock) fixed[id] = { dayId: S.assign[id].dayId, idx: aIdx(S.assign[id]) };
+  const free = S.students.filter(s => !fixed[s.id]);
+  const cand = {};
+  free.forEach(s => { cand[s.id] = []; S.days.forEach(d => { for (let i = 0; i < NS(); i++) if (!check(s, d, i)) cand[s.id].push({ dayId: d.id, idx: i }); }); });
+  const T0 = performance.now(); let best = null, bestScore = Infinity;
+  for (let it = 0; it < 600; it++) {
+    if (best && performance.now() - T0 > 1200) break;
+    const occ = {}, asg = {};
+    const fits = (s, o, ign) => { for (const k of slotsOf(s, o.idx)) { const w = occ[K(o.dayId, k)]; if (w && w !== ign) return false; } return true; };
+    const put = (s, o) => { asg[s.id] = { dayId: o.dayId, idx: o.idx }; slotsOf(s, o.idx).forEach(k => occ[K(o.dayId, k)] = s.id); };
+    const take = s => { const o = asg[s.id]; if (!o) return; slotsOf(s, o.idx).forEach(k => { if (occ[K(o.dayId, k)] === s.id) delete occ[K(o.dayId, k)]; }); delete asg[s.id]; };
+    const scored = s => { const r = []; for (const o of cand[s.id]) { if (!fits(s, o)) continue; asg[s.id] = o; r.push({ o, c: cost(asg) }); delete asg[s.id]; } return r.sort((a, b) => a.c - b.c); };
+    for (const id in fixed) put(SB[id], fixed[id]);
+    const order = free.map(s => ({ s, k: cand[s.id].length / multOf(s) - (s.sibs.length || s.pair ? 5 : 0) + (it ? Math.random() * 6 : 0) })).sort((a, b) => a.k - b.k).map(x => x.s);
+    const un = [];
+    for (const s of order) { const r = scored(s); if (!r.length) { un.push(s); continue; } put(s, (it && r.length > 1 && Math.random() < 0.2) ? r[1].o : r[0].o); }
+    for (let ui = un.length - 1; ui >= 0; ui--) {   // 入らなかった人：1人どかして入れられないか
+      const u = un[ui]; let ok = false;
+      for (const o of cand[u.id]) {
+        const bl = new Set(); slotsOf(u, o.idx).forEach(k => { const w = occ[K(o.dayId, k)]; if (w) bl.add(w); });
+        if (bl.size !== 1) continue; const bid = [...bl][0]; if (fixed[bid]) continue;
+        const b = SB[bid], prev = asg[bid]; take(b); put(u, o);
+        const r = scored(b); if (r.length) { put(b, r[0].o); ok = true; break; }
+        take(u); put(b, prev);
+      }
+      if (ok) un.splice(ui, 1);
+    }
+    let cur = cost(asg);
+    for (let pass = 0; pass < 3; pass++) {   // もっとよい場所へ動かす・入れかえる
+      let better = false;
+      for (const s of free) {
+        if (!asg[s.id]) continue; const prev = asg[s.id]; take(s);
+        const r = scored(s); put(s, r.length && r[0].c < cur - 1e-9 ? r[0].o : prev);
+        const c = cost(asg); if (c < cur - 1e-9) { cur = c; better = true; }
+      }
+      const placed = free.filter(s => asg[s.id]);
+      for (let x = 0; x < placed.length; x++) for (let y = x + 1; y < placed.length; y++) {
+        const a = placed[x], b = placed[y]; if (multOf(a) !== multOf(b)) continue;
+        const pa = asg[a.id], pb = asg[b.id];
+        if (check(a, DB[pb.dayId], pb.idx) || check(b, DB[pa.dayId], pa.idx) || !fits(a, pb, b.id) || !fits(b, pa, a.id)) continue;
+        asg[a.id] = pb; asg[b.id] = pa; const c = cost(asg);
+        if (c < cur - 1e-9) { cur = c; better = true; slotsOf(a, pb.idx).forEach(k => occ[K(pb.dayId, k)] = a.id); slotsOf(b, pa.idx).forEach(k => occ[K(pa.dayId, k)] = b.id); }
+        else { asg[a.id] = pa; asg[b.id] = pb; }
+      }
+      if (!better) break;
+    }
+    const score = un.length * 1e5 + cur;
+    if (score < bestScore) { bestScore = score; best = { asg: JSON.parse(JSON.stringify(asg)), un: un.map(s => s.id) }; }
+  }
+  const out = {};
+  for (const id in best.asg) out[id] = { dayId: best.asg[id].dayId, t: S.slots[best.asg[id].idx], lock: !!fixed[id] };
+  S.assign = out; save();
+  return best.un.map(id => ({ s: SB[id], why: cand[id].length ? '空いている時間帯が足りない' : '○の時間帯がない（または使わない時間・きょうだいと同じ時間）' }));
+}
+
+/* ========== 画面 ========== */
+let page = 1, wishView = 'one', wishId = null, selId = null, showPlaced = false;
+function go(p) { page = p; selId = null; render(); $('#main').scrollTop = 0; }
+function render() {
+  reindex();
+  $$('.page').forEach(el => el.hidden = +el.dataset.p !== page);
+  const L = S.students;
+  const doneStep = { 1: L.length > 0, 2: S.days.length > 0 && NS() > 0, 3: L.length > 0 && L.every(s => s.done), 4: L.length > 0 && L.every(s => S.assign[s.id]), 5: false };
+  $$('#steps button').forEach(b => { const n = +b.dataset.go; b.classList.toggle('on', n === page); b.classList.toggle('done', n !== page && doneStep[n]); });
+  $$('#kindSw button').forEach(b => b.classList.toggle('on', b.dataset.kind === S.kind));
+  $('#clsTxt').textContent = P.cls || 'クラス名を入れる';
+  updHist();
+  ({ 1: renderNames, 2: renderDays, 3: renderWish, 4: renderPlan, 5: renderOut })[page]();
+}
+document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g && !g.closest('#modal')) go(+g.dataset.go); });
+$('#kindSw').addEventListener('click', e => {
+  const b = e.target.closest('[data-kind]'); if (!b || b.dataset.kind === S.kind) return;
+  if (!S.title || S.title === TITLE[S.kind]) S.title = TITLE[b.dataset.kind];
+  S.kind = b.dataset.kind; save(); render(); toast(`${TITLE[S.kind]}に切りかえました`);
+});
+$('#undoBtn').onclick = () => jump(-1);
+$('#redoBtn').onclick = () => jump(1);
+document.addEventListener('keydown', e => {
+  if (MC || !(e.ctrlKey || e.metaKey) || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
+  if (e.key === 'z' && !e.shiftKey) { e.preventDefault(); jump(-1); } else if (e.key === 'y' || (e.key === 'z' && e.shiftKey)) { e.preventDefault(); jump(1); }
+});
+function fileBase() { return [P.cls, S.title || TITLE[S.kind]].filter(Boolean).join('_') || '面談日程'; }
+$('#fileBtn').onclick = async () => {
+  const v = await dlg(`<h3 style="margin-top:0">保存・読み込み</h3><p class="hint">入力した内容は、このブラウザに自動で保存されています。別のパソコンで続けるときや、念のため残しておくときはファイルにします。</p>`,
+    [{ label: 'とじる', value: null }, { label: 'ファイルから読み込む', value: 'load' }, { label: 'ファイルに保存', cls: 'pri', value: 'save' }]);
+  if (v === 'save') download(`${fileBase()}_データ.json`, new Blob([JSON.stringify({ app: 'mendan-zukuri', v: 3, S, P }, null, 1)], { type: 'application/json' }));
+  if (v === 'load') { $('#dataFile').value = ''; $('#dataFile').click(); }
+};
+$('#dataFile').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return; let o;
+  try { o = JSON.parse(await f.text()); } catch (err) { toast('ファイルを読めませんでした'); return; }
+  if (!o || !o.S || o.v !== 3) { toast('このアプリのファイルではないようです'); return; }
+  if (!await confirmDlg('<p>今の内容を、読み込んだファイルの内容に置きかえます。よろしいですか？</p>', '置きかえる')) return;
+  S = norm(o.S); if (o.P) { P = normProf(o.P); saveP(); } save(); wishId = null; go(1); toast('読み込みました');
+};
+
+/* ========== 1 名前と先生 ========== */
+function nextNo() { let m = 0; S.students.forEach(s => { const n = parseInt(toHalf(s.no), 10); if (n > m) m = n; }); return String(m + 1); }
+const newStudent = (name, no, staff) => ({ id: uid(), no: no || nextNo(), name: name || '', staff: staff || [], mult: 1, ng: {}, sibs: [], pair: '', done: false });
+function renderNames() {
+  if (document.activeElement !== $('#clsIn')) $('#clsIn').value = P.cls;
+  if (document.activeElement !== $('#staffIn')) $('#staffIn').value = P.staff.join(' ');
+  $('#nameCnt').textContent = S.students.length + '人';
+  $('#stfHint').hidden = !P.staff.length;
+  $('#nameList').innerHTML = S.students.length ? S.students.map(s => {
+    const all = [...P.staff, ...s.staff.filter(x => !P.staff.includes(x))];
+    return `<div class="nrow">
+    <input type="text" class="no" data-f="no" data-id="${s.id}" value="${esc(s.no)}" title="番号" inputmode="numeric">
+    <input type="text" class="nm" data-f="name" data-id="${s.id}" value="${esc(s.name)}" placeholder="名前">
+    <div class="stf">${all.map(x => { const k = s.staff.indexOf(x); return `<button data-stf="${esc(x)}" data-id="${s.id}" class="${k === 0 ? 'main' : k > 0 ? 'sub' : ''}" title="${k === 0 ? '主に話す先生' : k > 0 ? '同席' : '押すと入ります'}">${esc(x)}</button>`; }).join('') || '<span class="hint" style="margin:0">↑「先生の名前」を入れると、ここで選べます</span>'}</div>
+    <button class="icon" data-del="${s.id}" title="消す">✕</button></div>`;
+  }).join('') : '<p class="empty">まだだれも登録していません</p>';
+}
+$('#clsIn').onchange = e => { P.cls = e.target.value.trim(); saveP(); render(); };
+$('#staffIn').onchange = e => { P.staff = [...new Set(splitStaff(e.target.value))]; saveP(); render(); };
+$('#bulkAdd').onclick = () => {
+  const lines = $('#bulk').value.split(/\r?\n/).map(l => l.trim()).filter(Boolean); if (!lines.length) { toast('名前を入れてください'); return; }
+  let n = 0;
+  lines.forEach(l => {
+    const c = l.split(/\t|,|，/).map(x => x.trim()).filter((x, i) => i === 0 || x !== '');
+    let no = ''; if (c.length > 1 && /^[0-9０-９]+$/.test(c[0])) no = toHalf(c.shift());
+    if (!c[0]) return;
+    const st = splitStaff(c.slice(1).join('・').replace(/[（）()]/g, ''));
+    st.forEach(x => { if (!P.staff.includes(x)) P.staff.push(x); });
+    S.students.push(newStudent(c[0], no, st)); n++;
+  });
+  saveP(); $('#bulk').value = ''; save(); render(); toast(`${n}人追加しました`);
+};
+$('#oneAdd').onclick = () => { S.students.push(newStudent('')); save(); render(); const l = $$('#nameList .nm'); if (l.length) l[l.length - 1].focus(); };
+$('#renum').onclick = () => { S.students.forEach((s, i) => s.no = String(i + 1)); save(); render(); toast('番号をふり直しました'); };
+$('#clearNames').onclick = async () => { if (!S.students.length) return; if (!await confirmDlg(`<p>登録した${S.students.length}人を全員消します。よろしいですか？</p>`, '全員消す', true)) return; S.students = []; S.assign = {}; save(); render(); };
+$('#nameList').addEventListener('change', e => { const t = e.target, s = SB[t.dataset.id]; if (!s || !t.dataset.f) return; s[t.dataset.f] = t.dataset.f === 'no' ? toHalf(t.value.trim()) : t.value.trim(); save(); });
+$('#nameList').addEventListener('click', e => {
+  const st = e.target.closest('[data-stf]');
+  if (st) {   // なし → 主 → 同席 → なし
+    const s = SB[st.dataset.id], x = st.dataset.stf, k = s.staff.indexOf(x);
+    if (k < 0) { if (s.staff.length) s.staff.push(x); else s.staff = [x]; }
+    else if (k === 0) { s.staff.splice(0, 1); s.staff.push(x); if (s.staff.length === 1) s.staff = []; }
+    else s.staff.splice(k, 1);
+    save(); renderNames(); return;
+  }
+  const b = e.target.closest('[data-del]'); if (!b) return; const s = SB[b.dataset.del];
+  S.students = S.students.filter(x => x.id !== s.id); save(); render(); toast(`${s.name || '名前なし'}を消しました（「もどす」で取り消せます）`);
+});
+
+/* ========== 2 日にちと時間帯 ========== */
+function renderDays() {
+  if (document.activeElement !== $('#titleIn')) $('#titleIn').value = S.title;
+  $('#dayList').innerHTML = S.days.map(d => `<div class="dd"><input type="date" data-day="${d.id}" value="${esc(d.date)}"><small>${parseYmd(d.date) ? '(' + WD[parseYmd(d.date).getDay()] + ')' : ''}</small>${S.days.length > 1 ? `<button class="icon" data-dday="${d.id}" title="この日を消す">✕</button>` : ''}</div>`).join('');
+  $('#slotList').innerHTML = S.slots.length ? S.slots.map(t => `<span class="chip">${tLabel(t)}～<button data-dslot="${t}" title="消す">✕</button></span>`).join('') : '<span class="hint">時間帯がまだありません。下で追加してください。</span>';
+  if (!S.days.length || !NS()) { $('#useTab').innerHTML = ''; return; }
+  $('#useTab').innerHTML = `<table class="use"><tr><th></th>${S.days.map(d => `<th>${esc(dayLabel(d.date))}</th>`).join('')}</tr>` +
+    S.slots.map(t => `<tr><th style="text-align:right">${tLabel(t)}～</th>${S.days.map(d => `<td><button class="${isClosed(d.id, t) ? 'off' : ''}" data-use="${d.id}|${t}">${isClosed(d.id, t) ? 'ー' : '○'}</button></td>`).join('')}</tr>`).join('') + '</table>';
+}
+$('#titleIn').onchange = e => { S.title = e.target.value.trim(); save(); };
+$('#dayList').addEventListener('change', e => { const t = e.target; if (!t.dataset.day) return; DB[t.dataset.day].date = t.value; S.days.sort((a, b) => (a.date || '9').localeCompare(b.date || '9')); save(); render(); });
+$('#dayList').addEventListener('click', async e => {
+  const b = e.target.closest('[data-dday]'); if (!b) return; const d = DB[b.dataset.dday], n = dayCount(d.id);
+  if (n && !await confirmDlg(`<p>${dayLabel(d.date)}には ${n}人決まっています。この日を消しますか？</p>`, '消す', true)) return;
+  S.days = S.days.filter(x => x.id !== d.id); save(); render();
+});
+$('#addDay').onclick = () => {
+  const L = S.days[S.days.length - 1], base = L && parseYmd(L.date) ? parseYmd(L.date) : new Date();
+  base.setDate(base.getDate() + 1); S.days.push({ id: uid(), date: ymd(nextWeekday(base)) }); save(); render();
+};
+function addSlots(arr) { const before = NS(); S.slots = normSlots([...S.slots, ...arr]); save(); render(); return NS() - before; }
+$('#addSlot').onclick = () => { const v = $('#slotIn').value; if (!v) return; if (!addSlots([v])) toast('その時間帯はもうあります'); };
+$('#genSlots').onclick = () => {
+  const a = toMin($('#genA').value), b = toMin($('#genB').value), st = +$('#genStep').value;
+  if (isNaN(a) || isNaN(b) || b < a) { toast('始まりと終わりの時刻を入れてください'); return; }
+  const arr = []; for (let m = a; m <= b; m += st) arr.push(fmt2(m));
+  toast(`${addSlots(arr)}個の時間帯を追加しました`);
+};
+$('#clearSlots').onclick = async () => { if (!NS()) return; if (!await confirmDlg('<p>時間帯を全部消します。決まった日程もはずれます。</p>', '消す', true)) return; S.slots = []; save(); render(); };
+$('#slotList').addEventListener('click', async e => {
+  const b = e.target.closest('[data-dslot]'); if (!b) return; const t = b.dataset.dslot;
+  const n = Object.values(S.assign).filter(a => a.t === t).length;
+  if (n && !await confirmDlg(`<p>${tLabel(t)}～ には ${n}人決まっています。消しますか？</p>`, '消す', true)) return;
+  S.slots = S.slots.filter(x => x !== t); save(); render();
+});
+$('#useTab').addEventListener('click', e => { const b = e.target.closest('[data-use]'); if (!b) return; const k = b.dataset.use; if (S.closed[k]) delete S.closed[k]; else S.closed[k] = 1; save(); render(); });
+
+/* ========== 3 希望の入力 ========== */
+function renderWish() {
+  const L = S.students;
+  $$('#wishTabs [data-wv]').forEach(b => b.classList.toggle('on', b.dataset.wv === wishView));
+  const none = !L.length ? '先に「1. 名前と先生」で名前を入れてください。' : (!S.days.length || !NS()) ? '先に「2. 日にちと時間帯」を入れてください。' : '';
+  $('#wishEmpty').innerHTML = none ? `<div class="card"><p class="empty">${none}</p></div>` : '';
+  $('#wishTabs').hidden = !!none; $('#wishSplit').hidden = !!none || wishView !== 'one'; $('#wishAll').hidden = !!none || wishView !== 'all';
+  if (none) return;
+  if (wishView === 'all') { renderWishAll(); return; }
+  if (!SB[wishId]) wishId = L[0].id;
+  const dn = L.filter(s => s.done).length;
+  $('#wishProg').innerHTML = `<div class="prog"><span>受け取った <b>${dn}</b>/${L.length}</span><div class="bar"><i style="width:${dn / L.length * 100}%"></i></div></div>`;
+  $('#wishList').innerHTML = L.map(s => `<button class="sitem ${s.id === wishId ? 'on' : ''}" data-id="${s.id}">
+    <span class="n">${esc(s.no)}</span><span class="nm">${esc(s.name || '名前なし')}</span>
+    ${multOf(s) > 1 ? `<span class="bdg">${multOf(s)}コマ</span>` : ''}${S.assign[s.id] && S.assign[s.id].lock ? '<span class="bdg">📌</span>' : ''}${s.sibs.length || s.pair ? '<span class="bdg sib">きょうだい</span>' : ''}
+    ${s.done ? '<span class="bdg ok">✓</span>' : ''}</button>`).join('');
+  renderWishMain();
+}
+function renderWishMain() {
+  const s = SB[wishId]; if (!s) return;
+  const a = S.assign[s.id], fixDay = a && a.lock ? a.dayId : '';
+  const nsib = s.sibs.length + (s.pair && SB[s.pair] ? 1 : 0);
+  let g = `<div class="wgrid" id="wGrid" style="grid-template-columns:76px repeat(${S.days.length}, minmax(80px,1fr))"><span></span>`;
+  g += S.days.map(d => `<button class="ch" data-wday="${d.id}">${esc(dayLabel(d.date))}</button>`).join('');
+  S.slots.forEach(t => {
+    g += `<button class="rh" data-wrow="${t}">${tLabel(t)}～</button>`;
+    S.days.forEach(d => {
+      if (isClosed(d.id, t)) { g += '<span class="wc cl" style="display:grid;place-items:center">ー</span>'; return; }
+      const x = !!s.ng[K(d.id, t)], sib = s.sibs.some(b => b.dayId === d.id && b.t === t);
+      g += `<button class="wc ${x ? 'x' : ''} ${sib ? 'sib' : ''}" data-k="${K(d.id, t)}" title="${sib ? 'きょうだいの' + kw() : ''}">${x ? '×' : '○'}</button>`;
+    });
+  });
+  g += '</div>';
+  $('#wishMain').innerHTML = `
+    <div class="whead">
+      <button class="btn sm" data-wnav="-1">◀</button>
+      <select id="wSel">${S.students.map(x => `<option value="${x.id}" ${x.id === s.id ? 'selected' : ''}>${esc(x.no)}　${esc(x.name || '名前なし')}</option>`).join('')}</select>
+      <button class="btn sm" data-wnav="1">▶</button>
+      <button class="btn sm" id="wNext">まだの人へ</button>
+    </div>
+    <div class="row">
+      <label class="chk"><input type="checkbox" id="wDone" ${s.done ? 'checked' : ''}>希望を受け取った</label>
+      <span class="sp"></span>
+      <span class="legend"><span><i style="background:var(--ok-l);border:1px solid #bfe3cc"></i>○ 来られる</span><span><i style="background:var(--ng-l);border:1px solid #f2c4c4"></i>× 来られない</span><span><i style="background:#f1ece6"></i>ー 使わない時間</span></span>
+      <button class="btn sm" data-wall="0">ぜんぶ○</button><button class="btn sm" data-wall="1">ぜんぶ×</button>
+    </div>
+    ${g}<p class="hint">マスを押すと ○×が切りかわります（なぞってもOK）。日にち・時間帯を押すと、その列・行をまとめて切りかえます。</p>
+    <div class="wbar">
+      <label class="wb"><span>${kw()}の長さ</span><select id="wDur">${[1, 2, 3].map(m => `<option value="${m}" ${multOf(s) === m ? 'selected' : ''}>${m}コマ${m === 1 ? '（ふつう）' : '続けて'}</option>`).join('')}</select></label>
+      <label class="wb"><span>時刻の指定</span><span class="row" style="gap:4px"><select id="wFixDay"><option value="">しない</option>${S.days.map(d => `<option value="${d.id}" ${fixDay === d.id ? 'selected' : ''}>${esc(dayLabel(d.date))}</option>`).join('')}</select>${fixDay ? `<select id="wFixTime">${S.slots.map(t => `<option value="${t}" ${a.t === t ? 'selected' : ''}>${tLabel(t)}～</option>`).join('')}</select>` : ''}</span></label>
+      <button class="btn wpop ${nsib ? 'has' : ''}" id="sibBtn"><span>きょうだい</span><b>${nsib ? esc(sibShort(s)) : 'なし'}</b></button>
+      <span class="sp"></span>
+      <button class="btn pri" data-wnav="1">次の人へ ▶</button>
+    </div>`;
+}
+function setCell(s, c, v) { if (v) s.ng[c.dataset.k] = 1; else delete s.ng[c.dataset.k]; c.classList.toggle('x', v); c.textContent = v ? '×' : '○'; }
+let paint = null, lastPtr = 'mouse';
+$('#wishList').addEventListener('click', e => { const b = e.target.closest('.sitem'); if (!b) return; wishId = b.dataset.id; renderWish(); });
+$('#wishMain').addEventListener('pointerdown', e => {
+  lastPtr = e.pointerType || 'mouse';
+  const c = e.target.closest('button.wc'); if (!c || lastPtr !== 'mouse') return;
+  e.preventDefault(); const s = SB[wishId], v = !s.ng[c.dataset.k]; setCell(s, c, v); paint = { v }; s.done = true;
+});
+window.addEventListener('pointermove', e => {
+  if (!paint) return; const el = document.elementFromPoint(e.clientX, e.clientY), c = el && el.closest && el.closest('button.wc');
+  if (c) { const s = SB[wishId]; if (!!s.ng[c.dataset.k] !== paint.v) setCell(s, c, paint.v); }
+});
+window.addEventListener('pointerup', () => { if (paint) { paint = null; save(); renderWish(); } });
+$('#wishMain').addEventListener('click', e => {
+  const s = SB[wishId]; if (!s) return;
+  const c = e.target.closest('button.wc');
+  if (c) { if (lastPtr === 'mouse') return; setCell(s, c, !s.ng[c.dataset.k]); s.done = true; save(); renderWish(); return; }
+  const flip = cs => { const anyOk = cs.some(x => !s.ng[x.dataset.k]); cs.forEach(x => setCell(s, x, anyOk)); s.done = true; save(); renderWish(); };
+  const wr = e.target.closest('[data-wrow]'); if (wr) { flip($$('#wGrid button.wc').filter(x => x.dataset.k.endsWith('|' + wr.dataset.wrow))); return; }
+  const wd = e.target.closest('[data-wday]'); if (wd) { flip($$('#wGrid button.wc').filter(x => x.dataset.k.startsWith(wd.dataset.wday + '|'))); return; }
+  const wa = e.target.closest('[data-wall]');
+  if (wa) { s.ng = {}; if (wa.dataset.wall === '1') S.days.forEach(d => S.slots.forEach(t => s.ng[K(d.id, t)] = 1)); s.done = true; save(); renderWish(); return; }
+  if (e.target.id === 'wNext') {
+    const L = S.students, k0 = L.findIndex(x => x.id === s.id);
+    for (let q = 1; q <= L.length; q++) { const x = L[(k0 + q) % L.length]; if (!x.done) { wishId = x.id; renderWish(); return; } }
+    toast('全員の希望を受け取っています'); return;
+  }
+  const nv = e.target.closest('[data-wnav]');
+  if (nv) { const k = S.students.findIndex(x => x.id === s.id) + +nv.dataset.wnav; if (k >= 0 && k < S.students.length) { wishId = S.students[k].id; renderWish(); const on = $('#wishList .sitem.on'); if (on) on.scrollIntoView({ block: 'nearest' }); } else toast(k < 0 ? '最初の人です' : '最後の人です'); return; }
+  if (e.target.closest('#sibBtn')) openSib(s);
+});
+$('#wishMain').addEventListener('change', e => {
+  const s = SB[wishId]; if (!s) return; const t = e.target;
+  if (t.id === 'wSel') { wishId = t.value; renderWish(); return; }
+  if (t.id === 'wDone') s.done = t.checked;
+  if (t.id === 'wDur') s.mult = +t.value;
+  if (t.id === 'wFixDay') { if (!t.value) { if (S.assign[s.id] && S.assign[s.id].lock) delete S.assign[s.id]; } else { const d = DB[t.value]; let i = 0; while (i < NS() && check(s, d, i)) i++; S.assign[s.id] = { dayId: d.id, t: S.slots[i < NS() ? i : 0], lock: true }; } }
+  if (t.id === 'wFixTime') { const a = S.assign[s.id]; if (a) a.t = t.value; }
+  save(); renderWish();
+});
+function sibHtml(s) {
+  const rows = s.sibs.map((b, k) => `<div class="sibrow" data-k="${k}">
+      <div class="row"><span>ほかのクラス</span><input type="text" data-f="cls" value="${esc(b.cls)}" placeholder="クラス 例）中学部１組" style="width:150px">
+        <select data-f="rel">${['', '兄', '姉', '弟', '妹'].map(r => `<option value="${r}" ${(b.rel || '') === r ? 'selected' : ''}>${r || '続きがら'}</option>`).join('')}</select><span class="sp"></span><button class="icon" data-delsib="${k}">✕</button></div>
+      <div class="row"><span>その子の${kw()}</span><select data-f="dayId"><option value="">日にち</option>${S.days.map(d => `<option value="${d.id}" ${b.dayId === d.id ? 'selected' : ''}>${esc(dayLabel(d.date))}</option>`).join('')}</select>
+        <select data-f="t"><option value="">時間帯</option>${S.slots.map(t => `<option value="${t}" ${b.t === t ? 'selected' : ''}>${tLabel(t)}～</option>`).join('')}</select></div>
+      <div class="hint" style="margin:0">${b.t && DB[b.dayId] ? `→ ${dayLabel(DB[b.dayId].date)} ${tLabel(b.t)}～ をさけて、同じ日のとなりの時間帯に入れます` : 'まだ決まっていなければ空らんでかまいません'}</div></div>`).join('');
+  const pairO = `<option value="">いない</option>` + S.students.filter(x => x.id !== s.id).map(x => `<option value="${x.id}" ${s.pair === x.id ? 'selected' : ''}>${esc(x.no)}　${esc(x.name || '名前なし')}</option>`).join('');
+  return `<h3 style="margin-top:0">${esc(s.no)}　${esc(s.name || '名前なし')}　のきょうだい</h3>
+    <p class="hint">ほかのクラスのきょうだいは、その${kw()}と同じ時間をさけて、同じ日のとなりの時間帯に入れます。このクラスのきょうだいは、同じ日の続きの時間帯に入れます。</p>
+    ${rows || '<p class="empty" style="padding:10px">ほかのクラスのきょうだいは、まだ入っていません</p>'}
+    <div class="row"><button class="btn sm" id="addSib">＋ ほかのクラスのきょうだいを追加</button></div>
+    <h3>このクラスのきょうだい</h3><select id="wPair">${pairO}</select>`;
+}
+async function openSib(s) {
+  const re = () => { $('#mBody').innerHTML = sibHtml(s); };
+  await dlg(sibHtml(s), [{ label: 'とじる', cls: 'pri', value: 1 }], {
+    wide: true,
+    onClick: e => {
+      if (e.target.id === 'addSib') { s.sibs.push({ cls: '', rel: '', dayId: '', t: '' }); save(); re(); }
+      const d = e.target.closest('[data-delsib]'); if (d) { s.sibs.splice(+d.dataset.delsib, 1); save(); re(); }
+    },
+    onChange: e => {
+      const t = e.target;
+      if (t.id === 'wPair') {
+        const old = SB[s.pair]; if (old && old.pair === s.id) old.pair = '';
+        s.pair = t.value; const nw = SB[s.pair];
+        if (nw) { if (nw.pair && SB[nw.pair] && nw.pair !== s.id) SB[nw.pair].pair = ''; nw.pair = s.id; }
+        save(); re(); return;
+      }
+      const row = t.closest('.sibrow'); if (!row) return; const b = s.sibs[+row.dataset.k];
+      b[t.dataset.f] = t.value.trim(); save(); if (t.dataset.f !== 'cls') re();
+    }
+  });
+  render();
+}
+/* 全員の○× */
+let aggSort = 'no';
+function aggCols() { const c = []; S.days.forEach(d => S.slots.forEach((t, k) => c.push({ d, t, first: k === 0 }))); return c; }
+function cellState(s, d, t) { if (isClosed(d.id, t)) return 'b'; if (!s.done) return 'u'; return s.ng[K(d.id, t)] ? 'x' : 'o'; }
+const okCount = (s, cols) => cols.filter(c => cellState(s, c.d, c.t) === 'o').length;
+const MARK = { o: '○', x: '×', u: '・', b: 'ー' };
+function renderWishAll() {
+  const cols = aggCols(), L = S.students.slice().sort(byNo), rec = L.filter(s => s.done).length;
+  if (aggSort === 'few') L.sort((a, b) => (a.done ? okCount(a, cols) : 999) - (b.done ? okCount(b, cols) : 999) || byNo(a, b));
+  let t = `<div class="row"><h2 style="margin:0">全員の○×</h2><span class="tag ${rec === L.length ? 'ok' : 'no'}">受け取った ${rec}/${L.length}人</span><span class="sp"></span>
+    <button class="btn sm ${aggSort === 'no' ? 'on' : ''}" data-agsort="no">番号順</button><button class="btn sm ${aggSort === 'few' ? 'on' : ''}" data-agsort="few">○が少ない順</button></div>
+    <p class="hint">マスを押すと ○× を直せます（紙で受け取った希望をここで入れてもOK）。名前を押すと1人ずつの画面に移ります。「・」はまだ受け取っていない人です。</p>
+    <div class="aggwrap"><table class="agg"><thead><tr><th class="stk" rowspan="2" style="padding-left:8px">名前</th><th rowspan="2" class="cnt">○の数</th>`;
+  S.days.forEach(d => t += `<th colspan="${NS()}" class="dhd dsep">${esc(dayLabel(d.date))}</th>`);
+  t += '</tr><tr>' + cols.map(c => `<th class="${c.first ? 'dsep' : ''}">${tLabel(c.t)}</th>`).join('') + '</tr></thead><tbody>';
+  L.forEach(s => {
+    t += `<tr class="${s.done ? '' : 'nd'}"><td class="stk nmc" data-agname="${s.id}"><small>${esc(s.no)}</small>${esc(s.name || '名前なし')}</td><td class="cnt">${s.done ? okCount(s, cols) : '未'}</td>`;
+    cols.forEach((c, i) => { const st = cellState(s, c.d, c.t); t += `<td class="c ${st} ${c.first ? 'dsep' : ''}" data-ags="${s.id}" data-agc="${i}">${MARK[st]}</td>`; });
+    t += '</tr>';
+  });
+  t += '</tbody><tfoot><tr><td class="stk" style="padding-left:8px">○の人数</td><td></td>';
+  cols.forEach(c => { const n = S.students.filter(s => s.done && cellState(s, c.d, c.t) === 'o').length, r = rec ? n / rec : 0; t += `<td class="sum ${c.first ? 'dsep' : ''}" style="background:rgba(58,154,100,${(0.08 + 0.55 * r).toFixed(2)})">${n}</td>`; });
+  t += '</tr></tfoot></table></div>';
+  const w = $('.aggwrap'), sc = w ? [w.scrollLeft, w.scrollTop] : null;
+  $('#wishAll').innerHTML = t;
+  if (sc) { $('.aggwrap').scrollLeft = sc[0]; $('.aggwrap').scrollTop = sc[1]; }
+}
+$('#wishTabs').addEventListener('click', e => { const b = e.target.closest('[data-wv]'); if (!b) return; wishView = b.dataset.wv; renderWish(); });
+$('#wishAll').addEventListener('click', e => {
+  const so = e.target.closest('[data-agsort]'); if (so) { aggSort = so.dataset.agsort; renderWishAll(); return; }
+  const nm = e.target.closest('[data-agname]'); if (nm) { wishId = nm.dataset.agname; wishView = 'one'; renderWish(); $('#main').scrollTop = 0; return; }
+  const c = e.target.closest('td.c'); if (!c || c.classList.contains('b')) return;
+  const s = SB[c.dataset.ags], col = aggCols()[+c.dataset.agc]; if (!s || !col) return;
+  const k = K(col.d.id, col.t), cur = s.done && s.ng[k];
+  if (cur) delete s.ng[k]; else s.ng[k] = 1; s.done = true; save(); render();
+});
+
+/* ========== 4 日程の調整（見本と同じ形の表） ========== */
+function okCells(s) { let n = 0; S.days.forEach(d => { for (let i = 0; i < NS(); i++) if (!check(s, d, i)) n++; }); return n; }
+function renderPlan() {
+  const L = S.students, un = L.filter(s => !S.assign[s.id]), placed = L.filter(s => S.assign[s.id]), sel = SB[selId];
+  const done = placed.length;
+  $('#planProg').innerHTML = L.length ? `<span>決まった人 <b>${done}</b>/${L.length}</span><div class="bar"><i style="width:${done / L.length * 100}%"></i></div>${done === L.length ? '<span class="tag ok">全員決まりました</span>' : ''}` : '';
+  $('#planHint').innerHTML = sel
+    ? `<b>${esc(sel.name)}</b>：緑のマスは、この人が○の時間帯です。マスの中の名前を押すと決まります。<span class="sp"></span><button class="btn sm" id="unsel">選ぶのをやめる</button>`
+    : 'マスの中の<b style="color:#2f6e4a">緑の名前</b>は、その時間帯に○で、まだ決まっていない人です。押すと、その人に決まります（<mark>黄色</mark>）。決まった人を動かすときは、左の名前を押してから緑のマスの名前を押します。';
+  $('#planHint').insertAdjacentHTML('beforeend', `<span class="sp"></span><label class="chk"><input type="checkbox" id="showPlaced" ${showPlaced ? 'checked' : ''}>決まった人の名前も出す</label>`);
+  const time = (x, y) => { const a = S.assign[x.id], b = S.assign[y.id]; return S.days.findIndex(d => d.id === a.dayId) - S.days.findIndex(d => d.id === b.dayId) || aIdx(a) - aIdx(b); };
+  const item = s => `<button class="sitem ${selId === s.id ? 'on' : ''}" data-sid="${s.id}"><span class="n">${esc(s.no)}</span><span class="nm">${esc(s.name || '名前なし')}</span><span class="when">${S.assign[s.id] ? esc(whenShort(s)) + (S.assign[s.id].lock ? '' : ' ⚡') : (s.done ? '○' + okCells(s) : '希望まだ')}</span></button>`;
+  $('#planList').innerHTML = (un.length ? `<div class="psec">まだ決まっていない人 ${un.length}</div>${un.sort(byNo).map(item).join('')}` : (L.length ? '<div class="psec ok">全員決まっています</div>' : '')) +
+    (placed.length ? `<div class="psec">決まった人 ${placed.length}</div>${placed.sort(time).map(item).join('')}` : '') +
+    '<p class="hint" style="padding:6px 12px">⚡は自動で入れた人です。手で決めた人は、自動で入れ直しても動きません。</p>';
+  renderGrid();
+}
+function renderGrid() {
+  if (!S.days.length || !NS()) { $('#planGrid').innerHTML = '<p class="empty">「2. 日にちと時間帯」を入れてください。</p>'; return; }
+  const occ = occMap(), sel = SB[selId];
+  let g = `<table class="tt"><thead><tr><th>時間帯</th>${S.days.map(d => `<th>${esc(dayLabel(d.date))}<small>${dayCount(d.id)}人</small></th>`).join('')}</tr></thead><tbody>`;
+  S.slots.forEach((t, i) => {
+    g += `<tr><th class="tm">${tLabel(t)}～</th>`;
+    S.days.forEach(d => {
+      if (isClosed(d.id, t)) { g += '<td class="cl">ー</td>'; return; }
+      const here = occ[K(d.id, i)] || [];
+      let h = '';
+      here.forEach(x => {
+        const s = SB[x.id], a = S.assign[x.id];
+        if (x.first) h += `<div class="dec ${problemsOf(x.id).length || here.length > 1 ? 'warn' : ''}" title="${esc(problemsOf(x.id).join('、'))}"><span class="nm">${esc(s.name)}</span><span class="stx">${staffHtml(s)}</span><button class="mini" data-lock="${x.id}" title="${a.lock ? '手で決めた（自動で動かない）' : '自動で入れた'}">${a.lock ? '📌' : '⚡'}</button><button class="mini" data-undec="${x.id}" title="はずす">✕</button></div>`;
+        else h += `<div class="cont">${esc(s.name)}（つづき）</div>`;
+      });
+      const cs = S.students.filter(s => s.done && !here.some(x => x.id === s.id) && !check(s, d, i) && (showPlaced || !S.assign[s.id] || s.id === selId));
+      if (cs.length) h += `<div class="cands">${cs.sort(byNo).map(s => `<button class="cand ${S.assign[s.id] ? 'placed' : ''} ${selId === s.id ? 'hl' : ''}" data-cand="${s.id}" data-d="${d.id}" data-i="${i}" title="${S.assign[s.id] ? esc(whenShort(s)) + ' から動かす' : 'ここに決める'}">${esc(s.name)}</button>`).join('')}</div>`;
+      const ok = sel && !here.some(x => x.id === sel.id) && !check(sel, d, i);
+      g += `<td class="${ok ? 'okcell' : ''}">${h}<button class="plus" data-plus="${d.id}" data-i="${i}" title="ほかの人をここに入れる">＋</button></td>`;
+    });
+    g += '</tr>';
+  });
+  $('#planGrid').innerHTML = g + '</tbody></table>';
+}
+function placeAt(s, d, i, quiet) {
+  const occ = occMap(), out = [];
+  slotsOf(s, i).forEach(k => (occ[K(d.id, k)] || []).forEach(x => { if (x.id !== s.id && !out.includes(x.id)) out.push(x.id); }));
+  out.forEach(id => delete S.assign[id]);
+  S.assign[s.id] = { dayId: d.id, t: S.slots[i], lock: true };
+  save(); renderPlan();
+  if (!quiet) toast(`${s.name}を ${dayLabel(d.date)} ${tLabel(S.slots[i])}～ に決めました` + (out.length ? `（${out.map(id => SB[id].name).join('、')}は未定にもどしました）` : ''));
+}
+$('#planList').addEventListener('click', e => { const it = e.target.closest('[data-sid]'); if (!it) return; selId = selId === it.dataset.sid ? null : it.dataset.sid; renderPlan(); });
+$('#planHint').addEventListener('click', e => { if (e.target.id === 'unsel') { selId = null; renderPlan(); } });
+$('#planHint').addEventListener('change', e => { if (e.target.id === 'showPlaced') { showPlaced = e.target.checked; renderPlan(); } });
+$('#planGrid').addEventListener('click', async e => {
+  const c = e.target.closest('[data-cand]'); if (c) { placeAt(SB[c.dataset.cand], DB[c.dataset.d], +c.dataset.i); return; }
+  const u = e.target.closest('[data-undec]'); if (u) { const s = SB[u.dataset.undec]; delete S.assign[s.id]; save(); renderPlan(); toast(`${s.name}を未定にもどしました`); return; }
+  const l = e.target.closest('[data-lock]'); if (l) { const a = S.assign[l.dataset.lock]; a.lock = !a.lock; save(); renderPlan(); toast(a.lock ? '手で決めた人にしました（自動で動きません）' : '自動で入れた人にしました'); return; }
+  const p = e.target.closest('[data-plus]'); if (!p) return;
+  const d = DB[p.dataset.plus], i = +p.dataset.i;
+  const list = S.students.slice().sort(byNo).map(s => ({ s, r: check(s, d, i) }));
+  const btn = x => `<button class="${x.r ? '' : 'ok'}" data-pick="${x.s.id}">${esc(x.s.no)} ${esc(x.s.name)}<small>${x.r ? REASON[x.r] : S.assign[x.s.id] ? whenShort(x.s) : '未定'}</small></button>`;
+  const ok = list.filter(x => !x.r), ng = list.filter(x => x.r);
+  const id = await dlg(`<h3 style="margin-top:0">${esc(dayLabel(d.date))} ${tLabel(S.slots[i])}～ に入れる人</h3>
+    ${ok.length ? `<p class="hint">○の人</p><div class="pick">${ok.map(btn).join('')}</div>` : ''}
+    ${ng.length ? `<p class="hint" style="margin-top:14px">条件に合わない人（それでも入れられます）</p><div class="pick">${ng.map(btn).join('')}</div>` : ''}`,
+    [{ label: 'やめる', value: null }], { wide: true, onClick: e2 => { const b = e2.target.closest('[data-pick]'); if (b) closeDlg(b.dataset.pick); } });
+  if (id) placeAt(SB[id], d, i);
+});
+$('#clearBtn').onclick = async () => {
+  const n = Object.values(S.assign).filter(a => !a.lock).length; if (!n) { toast('自動で入れた人はいません'); return; }
+  if (!await confirmDlg(`<p>自動で入れた ${n}人（⚡）をはずします。手で決めた人（📌）はそのままです。</p>`, 'はずす')) return;
+  for (const id in S.assign) if (!S.assign[id].lock) delete S.assign[id]; save(); renderPlan();
+};
+$('#clearAllBtn').onclick = async () => {
+  const n = Object.keys(S.assign).length; if (!n) return;
+  if (!await confirmDlg(`<p>決まった ${n}人を全員はずします（「もどす」で取り消せます）。</p>`, 'ぜんぶはずす', true)) return;
+  S.assign = {}; save(); renderPlan();
+};
+$('#autoBtn').onclick = async () => {
+  if (!S.students.length) { toast('先に名前を登録してください'); return; }
+  if (!S.days.length || !NS()) { toast('先に日にちと時間帯を入れてください'); return; }
+  const nd = S.students.filter(s => !s.done).length;
+  if (nd && !await confirmDlg(`<p>希望をまだ受け取っていない人が <b>${nd}人</b> います。その人は「どこでも○」として入れます。</p>`, '続ける')) return;
+  const pr = S.pref || {};
+  const o = (name, v, cur, t, sub) => `<label class="opt"><input type="radio" name="${name}" value="${v}" ${cur === v ? 'checked' : ''}><span>${t}<small>${sub}</small></span></label>`;
+  const v = await dlg(`<h3 style="margin-top:0">自動で入れる</h3><p class="hint">保護者の都合・きょうだい・使わない時間を考えて入れます。手で決めた人（📌）は動きません。</p>
+    <h3>日の使い方</h3>${o('pd', '', pr.days || '', 'おまかせ', '条件に合うところへ')}${o('pd', 'even', pr.days || '', '日ごとの人数をそろえる', '毎日同じくらいの人数に')}${o('pd', 'pack', pr.days || '', 'なるべく少ない日に', '前の日からつめて入れる')}
+    <h3>時間のあき方</h3>${o('pg', '', pr.gap || '', 'おまかせ', '')}${o('pg', 'tight', pr.gap || '', 'すき間なくつめる', '続けて入れる')}${o('pg', 'spread', pr.gap || '', 'ときどき間をあける', '連続しすぎないように')}`,
+    [{ label: 'やめる', value: null }, { label: '⚡ 入れる', cls: 'pri', value: () => ({ days: $('[name=pd]:checked').value, gap: $('[name=pg]:checked').value }) }]);
+  if (!v) return;
+  S.pref = v; busy('日程を考えています…'); await pause(); await pause();
+  let un; try { un = solve(); } finally { busy(); }
+  selId = null; renderPlan();
+  const n = S.students.filter(s => S.assign[s.id]).length;
+  if (!un.length) toast(`${n}人を入れました`);
+  else dlg(`<h3 style="margin-top:0">${n}人を入れました</h3><p><b style="color:var(--ng)">${un.length}人</b>は入りませんでした。</p><ul>${un.map(x => `<li>${esc(x.s.name)}：${esc(x.why)}</li>`).join('')}</ul><p class="hint">時間帯や日にちをふやす、表の「＋」から×の時間帯に手で入れる、などで調整してください。</p>`);
+};
+
+/* ========== 5 印刷・保存 ========== */
+function getL() { const L = Object.assign({}, LDEF); Object.keys(LDEF).forEach(k => { if (P.letter[k] !== undefined && P.letter[k] !== '') L[k] = P.letter[k]; }); L.size = +L.size || 12; return L; }
+function jpDay(dt, withMonth) { const d = parseYmd(dt); if (!d) return '　　月　　日（　）'; return `${withMonth === false ? '' : zen(d.getMonth() + 1) + '月'}${zen(d.getDate())}日（${WD[d.getDay()]}）`; }
+function fillTpl(str, s) {
+  const a = S.assign[s.id], d = a && DB[a.dayId];
+  const map = { 'クラス': P.cls, '名前': s.name || '', '題名': S.title || TITLE[S.kind], '番号': s.no || '',
+    '日付': d ? jpDay(d.date) : '　　月　　日（　）', '開始': d ? zen(tDoc(a.t)) : '　　：　　' };
+  return String(str || '').replace(/\{(クラス|名前|題名|番号|日付|開始)\}/g, (_, k) => map[k]);
+}
+function period() {   // 期間：８月28日（金）31日（月）
+  let last = -1;
+  return S.days.map(d => { const x = parseYmd(d.date); if (!x) return '日にち未定'; const m = x.getMonth(); const r = `${m !== last ? zen(m + 1) + '月' : ''}${x.getDate()}日（${WD[x.getDay()]}）`; last = m; return r; }).join('');
+}
+function letterTargets() { return S.students.filter(s => S.letterAll || S.assign[s.id]).sort(byNo); }
+function renderOut() {
+  const L = getL();
+  $$('#lform [data-l]').forEach(el => { if (document.activeElement !== el) el.value = L[el.dataset.l]; });
+  $('#lAll').checked = !!S.letterAll;
+  const T = letterTargets(), na = S.students.filter(s => !S.assign[s.id]).length;
+  $('#letterCount').innerHTML = `${T.length}人分（A4 ${Math.ceil(T.length / 8)}枚）` + (na ? (S.letterAll ? `　うち${na}人は日時が空らん` : `　まだ決まっていない${na}人は入りません`) : '');
+  previewTT(); previewSlip();
+}
+function ttTableHtml(mode) {   // mode: plan（決まった日程）／wish（希望の集約）
+  const occ = occMap();
+  let h = `<table class="ttb"><colgroup><col style="width:22%"><col style="width:13%">${S.days.map(() => '<col>').join('')}</colgroup><tr><th rowspan="3">時間帯</th><th>月</th>`;
+  monthGroups().forEach(g => h += `<th colspan="${g.n}">${g.m ? zen(g.m) + '月' : ''}</th>`);
+  h += `</tr><tr><th>日</th>${S.days.map(d => `<th>${parseYmd(d.date) ? parseYmd(d.date).getDate() : ''}</th>`).join('')}</tr><tr><th>曜日</th>${S.days.map(d => `<th>${parseYmd(d.date) ? WD[parseYmd(d.date).getDay()] : ''}</th>`).join('')}</tr>`;
+  S.slots.forEach((t, i) => {
+    h += `<tr><td class="t" colspan="2">${esc(tDoc(t))}～</td>`;
+    S.days.forEach(d => {
+      if (isClosed(d.id, t)) { h += '<td class="cl"></td>'; return; }
+      let c = '';
+      if (mode === 'plan') { const x = (occ[K(d.id, i)] || [])[0], s = x && SB[x.id]; if (s) c = x.first ? esc(s.name) + staffHtml(s) : esc(s.name) + '（つづき）'; }
+      else c = S.students.filter(s => s.done && !s.ng[K(d.id, t)]).sort(byNo).map(s => { const a = S.assign[s.id], on = a && a.dayId === d.id && slotsOf(s, aIdx(a)).includes(i); return `<span class="nw">${on ? `<mark>${esc(s.name)}</mark>` : esc(s.name)}</span>`; }).join('・<wbr>');
+      h += `<td>${c}</td>`;
+    });
+    h += '</tr>';
+  });
+  return h + '</table>';
+}
+const ttHead = () => `<p class="hd">${esc(P.cls)}　${esc(S.title)}について</p><p class="pd">期間：${esc(period())}</p>`;
+function previewTT() {
+  if (!S.days.length || !NS()) { $('#pvTT').innerHTML = '<p>日にちと時間帯を入れてください</p>'; return; }
+  $('#pvTT').innerHTML = ttHead() + ttTableHtml('plan');
+}
+function slipHtml(s, L) { return `<div class="slip" style="font-family:'${esc(L.font)}',var(--doc);font-size:${L.size * 1.25}px;line-height:${L.size * 1.25 * 1.42}px"><p>${esc(fillTpl(L.to, s))}</p><p class="c">${esc(fillTpl(L.title, s))}</p><p class="r">${esc(fillTpl(L.from, s))}</p>${String(L.body).split('\n').map(x => `<p>${esc(fillTpl(x, s))}</p>`).join('')}<p>${esc(fillTpl(L.when, s))}</p></div>`; }
+function previewSlip() { const L = getL(), T = letterTargets(); $('#pvSlip').innerHTML = (T.length ? T.slice(0, 2) : [{ id: '', name: '高橋', no: '' }]).map(s => slipHtml(s, L)).join(''); }
+$('#lform').addEventListener('input', e => { const t = e.target; if (!t.dataset.l) return; P.letter[t.dataset.l] = t.dataset.l === 'size' ? +t.value : t.value; saveP(); previewSlip(); });
+$('#resetLetter').onclick = async () => { if (!await confirmDlg('<p>お知らせの文面を、最初の文面にもどします。</p>', 'もどす', true)) return; P.letter = {}; saveP(); renderOut(); };
+$('#lAll').onchange = e => { S.letterAll = e.target.checked; save(); renderOut(); };
+function monthGroups() { const g = []; S.days.forEach(d => { const x = parseYmd(d.date), m = x ? x.getMonth() + 1 : 0; if (g.length && g[g.length - 1].m === m) g[g.length - 1].n++; else g.push({ m, n: 1 }); }); return g; }
+
+/* --- 印刷ページ・PDF --- */
+const inFrame = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+let pvKind = '';
+function slipCellHtml(s, L) { if (!s) return '<td></td>'; return `<td><p>${esc(fillTpl(L.to, s))}</p><p class="c">${esc(fillTpl(L.title, s))}</p><p class="r">${esc(fillTpl(L.from, s))}</p>${String(L.body).split('\n').map(x => `<p>${esc(fillTpl(x, s))}</p>`).join('')}<p>${esc(fillTpl(L.when, s))}</p></td>`; }
+function pagesHtml(kind) {
+  if (kind === 'tt') return `<div class="a4 tt">${ttHead()}${ttTableHtml('plan')}</div><div class="a4 tt"><p class="pd">希望</p>${ttTableHtml('wish')}</div>`;
+  const L = getL(), T = letterTargets(), st = `font-family:'${esc(L.font)}',var(--doc);font-size:${L.size}pt;line-height:${(L.size * 1.42).toFixed(1)}pt`;
+  let h = '';
+  for (let i = 0; i < T.length; i += 8) {
+    let rows = ''; for (let r = 0; r < 4; r++) rows += `<tr>${slipCellHtml(T[i + r * 2], L)}${slipCellHtml(T[i + r * 2 + 1], L)}</tr>`;
+    h += `<div class="a4 slips" style="${st}"><table class="slipt">${rows}</table></div>`;
+  }
+  return h;
+}
+function openPrint(kind) {
+  pvKind = kind;
+  $('#pvTitle').textContent = kind === 'tt' ? '日程表と希望の集約表' : '保護者へのお知らせ';
+  $('#pvPages').innerHTML = pagesHtml(kind);
+  $('#pvPrint').disabled = inFrame;
+  $('#pvNote').textContent = inFrame ? 'この画面からは印刷できません。PDFで保存してから印刷してください' : '印刷の画面で「PDFに保存」を選ぶと、PDFにもできます';
+  $('#printView').hidden = false; $('#printView').scrollTop = 0;
+}
+$('#pvBack').onclick = () => { $('#printView').hidden = true; $('#pvPages').innerHTML = ''; };
+$('#pvPrint').onclick = () => { try { window.print(); } catch (e) { toast('印刷できませんでした。PDFで保存してください'); } };
+$('#pvPdf').onclick = () => savePdf();
+let h2cP = null;
+function loadH2C() {
+  if (window.html2canvas) return Promise.resolve();
+  if (!h2cP) h2cP = new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'; sc.onload = res; sc.onerror = () => { h2cP = null; rej(); }; document.head.appendChild(sc); });
+  return h2cP;
+}
+async function savePdf() {
+  const pages = $$('#pvPages .a4'); if (!pages.length) return;
+  busy('PDFを作っています…'); await pause();
+  try {
+    try { await loadH2C(); } catch (e) { toast('PDFを作る部品を読み込めませんでした。インターネットにつながっているか確かめてください'); return; }
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    const imgs = [];
+    for (let i = 0; i < pages.length; i++) {
+      busy(`PDFを作っています… ${i + 1}/${pages.length}`); await pause();
+      const c = await window.html2canvas(pages[i], { scale: 2, backgroundColor: '#ffffff', logging: false });
+      imgs.push({ w: c.width, h: c.height, blob: await new Promise(r => c.toBlob(r, 'image/jpeg', 0.92)) });
+      c.width = c.height = 1;
+    }
+    await download(`${fileBase()}_${pvKind === 'tt' ? '日程表と希望' : 'お知らせ'}.pdf`, await makePdf(imgs));
+  } finally { busy(); }
+}
+async function makePdf(imgs) {   // A4たて。画像をページの幅に合わせて上から置く
+  const enc = new TextEncoder(), parts = [], offs = []; let len = 0;
+  const add = v => { const b = typeof v === 'string' ? enc.encode(v) : v; parts.push(b); len += b.length; };
+  const n = imgs.length, total = 2 + n * 3, W = 595.28, H = 841.89;
+  add('%PDF-1.4\n%\u00e2\u00e3\u00cf\u00d3\n');
+  offs[1] = len; add('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+  offs[2] = len; add(`2 0 obj\n<< /Type /Pages /Kids [${imgs.map((_, i) => `${3 + i * 3} 0 R`).join(' ')}] /Count ${n} >>\nendobj\n`);
+  for (let i = 0; i < n; i++) {
+    const im = imgs[i], pid = 3 + i * 3, cid = pid + 1, iid = pid + 2;
+    const k = Math.min(W / im.w, H / im.h), dw = (im.w * k).toFixed(2), dh = (im.h * k).toFixed(2), x0 = ((W - im.w * k) / 2).toFixed(2), y0 = (H - im.h * k).toFixed(2);
+    const jpg = new Uint8Array(await im.blob.arrayBuffer()), cs = `q ${dw} 0 0 ${dh} ${x0} ${y0} cm /Im0 Do Q`;
+    offs[pid] = len; add(`${pid} 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im0 ${iid} 0 R >> >> /Contents ${cid} 0 R >>\nendobj\n`);
+    offs[cid] = len; add(`${cid} 0 obj\n<< /Length ${cs.length} >>\nstream\n${cs}\nendstream\nendobj\n`);
+    offs[iid] = len; add(`${iid} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${im.w} /Height ${im.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpg.length} >>\nstream\n`); add(jpg); add('\nendstream\nendobj\n');
+  }
+  const xref = len; let x = `xref\n0 ${total + 1}\n0000000000 65535 f \n`;
+  for (let q = 1; q <= total; q++) x += String(offs[q]).padStart(10, '0') + ' 00000 n \n';
+  add(x + `trailer\n<< /Size ${total + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  return new Blob(parts, { type: 'application/pdf' });
+}
+
+/* --- Word（.docx）を組み立てる --- */
+const xEsc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+const WNS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
+function wr(text, o) {
+  o = o || {}; const f = o.font, sz = Math.round((o.sz || 11) * 2);
+  return `<w:r><w:rPr>${f ? `<w:rFonts w:ascii="${xEsc(f)}" w:eastAsia="${xEsc(f)}" w:hAnsi="${xEsc(f)}" w:hint="eastAsia"/>` : ''}${o.b ? '<w:b/>' : ''}${o.hl ? '<w:highlight w:val="yellow"/>' : ''}${o.u ? '<w:u w:val="single"/>' : ''}<w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/></w:rPr><w:t xml:space="preserve">${xEsc(text)}</w:t></w:r>`;
+}
+function wp(runs, o) {
+  o = o || {};
+  return `<w:p><w:pPr>${o.keep ? '<w:keepNext/>' : ''}${o.pb ? '<w:pageBreakBefore/>' : ''}<w:spacing w:before="0" w:after="${o.after || 0}" ${o.line ? `w:line="${o.line}" w:lineRule="exact"` : ''}/>${o.jc ? `<w:jc w:val="${o.jc}"/>` : ''}</w:pPr>${runs}</w:p>`;
+}
+function wtc(content, o) {
+  o = o || {};
+  return `<w:tc><w:tcPr><w:tcW w:w="${o.w}" w:type="dxa"/>${o.span ? `<w:gridSpan w:val="${o.span}"/>` : ''}${o.vm ? `<w:vMerge${o.vm === 'start' ? ' w:val="restart"' : ''}/>` : ''}${o.shade ? `<w:shd w:val="clear" w:color="auto" w:fill="${o.shade}"/>` : ''}<w:vAlign w:val="${o.va || 'center'}"/></w:tcPr>${content || wp('')}</w:tc>`;
+}
+const BORDERS = sz => `<w:tblBorders>${['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(k => `<w:${k} w:val="single" w:sz="${sz}" w:space="0" w:color="000000"/>`).join('')}</w:tblBorders>`;
+function docxFile(body, sect, font) {
+  const doc = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ${WNS}><w:body>${body}${sect}</w:body></w:document>`;
+  const styles = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles ${WNS}><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="${xEsc(font)}" w:eastAsia="${xEsc(font)}" w:hAnsi="${xEsc(font)}" w:cs="Times New Roman"/><w:kern w:val="2"/><w:sz w:val="21"/><w:szCs w:val="22"/><w:lang w:val="en-US" w:eastAsia="ja-JP" w:bidi="ar-SA"/></w:rPr></w:rPrDefault><w:pPrDefault/></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="a"><w:name w:val="Normal"/><w:qFormat/><w:pPr><w:widowControl w:val="0"/><w:jc w:val="both"/></w:pPr></w:style><w:style w:type="table" w:default="1" w:styleId="a1"><w:name w:val="Normal Table"/><w:tblPr><w:tblInd w:w="0" w:type="dxa"/><w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="108" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="108" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style></w:styles>`;
+  return zip([
+    { name: '[Content_Types].xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>' },
+    { name: '_rels/.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>' },
+    { name: 'word/_rels/document.xml.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' },
+    { name: 'word/document.xml', data: doc },
+    { name: 'word/styles.xml', data: styles }
+  ], 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+}
+/* 日程表（plan）と希望の集約表（wish）：見本と同じ組み方 */
+function ttTableXml(mode) {
+  const F = 'UD デジタル 教科書体 N-R', big = { font: F, sz: 16 }, small = { font: F, sz: 11 };
+  const n = Math.max(1, S.days.length), c0 = 2122, c1 = 1842, dw = Math.max(900, Math.floor((8494 - c0 - c1) / n)), occ = occMap();
+  let x = `<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/>${BORDERS(4)}<w:tblLayout w:type="fixed"/><w:tblLook w:val="04A0"/></w:tblPr><w:tblGrid><w:gridCol w:w="${c0}"/><w:gridCol w:w="${c1}"/>${S.days.map(() => `<w:gridCol w:w="${dw}"/>`).join('')}</w:tblGrid>`;
+  const hRow = c => `<w:tr><w:trPr><w:trHeight w:val="567"/></w:trPr>${c}</w:tr>`;
+  x += hRow(wtc(wp(wr('時間帯', big), { jc: 'center' }), { w: c0, vm: 'start', va: 'top' }) + wtc(wp(wr('月', big), { jc: 'center' }), { w: c1 }) + monthGroups().map(g => wtc(wp(wr(g.m ? zen(g.m) + '月' : '', big), { jc: 'center' }), { w: dw * g.n, span: g.n > 1 ? g.n : 0 })).join(''));
+  x += hRow(wtc('', { w: c0, vm: 'cont' }) + wtc(wp(wr('日', big), { jc: 'center' }), { w: c1 }) + S.days.map(d => wtc(wp(wr(parseYmd(d.date) ? String(parseYmd(d.date).getDate()) : '', big), { jc: 'center' }), { w: dw })).join(''));
+  x += hRow(wtc('', { w: c0, vm: 'cont' }) + wtc(wp(wr('曜日', big), { jc: 'center' }), { w: c1 }) + S.days.map(d => wtc(wp(wr(parseYmd(d.date) ? WD[parseYmd(d.date).getDay()] : '', big), { jc: 'center' }), { w: dw })).join(''));
+  S.slots.forEach((t, i) => {
+    let r = wtc(wp(wr(tDoc(t) + '～', big)), { w: c0 + c1, span: 2 });
+    S.days.forEach(d => {
+      let runs = '';
+      if (mode === 'plan') {
+        const o = (occ[K(d.id, i)] || [])[0], s = o && SB[o.id];
+        if (s) runs = o.first ? wr(s.name, small) + (s.staff.length ? wr('（', small) + s.staff.map((st, k) => (k ? wr('・', small) : '') + wr(st, Object.assign({ hl: k === 0 }, small))).join('') + wr('）', small) : '') : wr(s.name + '（つづき）', small);
+      } else if (!isClosed(d.id, t)) {
+        const names = S.students.filter(s => s.done && !s.ng[K(d.id, t)]).sort(byNo);
+        runs = names.map((s, k) => { const a = S.assign[s.id], on = a && a.dayId === d.id && slotsOf(s, aIdx(a)).includes(i); return (k ? wr('・', small) : '') + wr(s.name, Object.assign({ hl: on }, small)); }).join('');
+      }
+      r += wtc(wp(runs), { w: dw, va: 'top', shade: isClosed(d.id, t) ? 'E7E6E6' : '' });
+    });
+    x += `<w:tr><w:trPr><w:trHeight w:val="567"/></w:trPr>${r}</w:tr>`;
+  });
+  return x + '</w:tbl>';
+}
+function buildTTDocx() {
+  const F = 'UD デジタル 教科書体 N-R', o = { font: F, sz: 11 };
+  const body = wp(wr(`${P.cls}　${S.title}について`, o), { jc: 'center' }) + wp(wr(`期間：${period()}`, o), { after: 120 }) + ttTableXml('plan') +
+    wp(wr('希望', o), { pb: true, after: 60 }) + ttTableXml('wish') + wp('');
+  return docxFile(body, '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1985" w:right="1701" w:bottom="1701" w:left="1701" w:header="851" w:footer="992" w:gutter="0"/><w:cols w:space="425"/><w:docGrid w:type="lines" w:linePitch="360"/></w:sectPr>', F);
+}
+/* お知らせ：A4に2列×4段（見本の枠 約9.0cm×6.8cm） */
+function buildSlipDocx(list) {
+  const L = getL(), o = { font: L.font, sz: L.size }, line = Math.round(L.size * 20 * 1.42);
+  const cell = s => {
+    if (!s) return wp('');
+    return wp(wr(fillTpl(L.to, s), o), { line }) + wp(wr(fillTpl(L.title, s), Object.assign({ u: true }, o)), { jc: 'center', line }) + wp(wr(fillTpl(L.from, s), o), { jc: 'right', line }) +
+      String(L.body).split('\n').map(b => wp(wr(fillTpl(b, s), o), { line })).join('') + wp(wr(fillTpl(L.when, s), o), { line });
+  };
+  const W = 5233, H = 3740;
+  let x = `<w:tbl><w:tblPr><w:tblW w:w="${W * 2}" w:type="dxa"/>${BORDERS(8)}<w:tblLayout w:type="fixed"/><w:tblCellMar><w:top w:w="85" w:type="dxa"/><w:left w:w="142" w:type="dxa"/><w:bottom w:w="57" w:type="dxa"/><w:right w:w="142" w:type="dxa"/></w:tblCellMar><w:tblLook w:val="04A0"/></w:tblPr><w:tblGrid><w:gridCol w:w="${W}"/><w:gridCol w:w="${W}"/></w:tblGrid>`;
+  for (let i = 0; i < list.length; i += 2) x += `<w:tr><w:trPr><w:cantSplit/><w:trHeight w:val="${H}" w:hRule="exact"/></w:trPr>${wtc(cell(list[i]), { w: W, va: 'top' })}${wtc(cell(list[i + 1]), { w: W, va: 'top' })}</w:tr>`;
+  x += '</w:tbl>';
+  const body = x + `<w:p><w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/><w:rPr><w:sz w:val="2"/></w:rPr></w:pPr></w:p>`;
+  return docxFile(body, '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="720" w:right="720" w:bottom="567" w:left="720" w:header="851" w:footer="567" w:gutter="0"/><w:cols w:space="425"/></w:sectPr>', L.font);
+}
+
+/* --- zip・Excel・保存 --- */
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u) { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRC[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zip(files, type) {
+  const enc = new TextEncoder(), chunks = [], cen = []; let off = 0;
+  files.forEach(f => {
+    const name = enc.encode(f.name), data = typeof f.data === 'string' ? enc.encode(f.data) : f.data, crc = crc32(data);
+    const h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(12, 33, true);
+    h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, name.length, true);
+    chunks.push(new Uint8Array(h.buffer), name, data);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(14, 33, true);
+    c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, name.length, true); c.setUint32(42, off, true);
+    cen.push(new Uint8Array(c.buffer), name);
+    off += 30 + name.length + data.length;
+  });
+  const cs = cen.reduce((a, b) => a + b.length, 0), e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cs, true); e.setUint32(16, off, true);
+  return new Blob([...chunks, ...cen, new Uint8Array(e.buffer)], { type });
+}
+function colL(i) { let s = ''; i++; while (i) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; }
+function sheetXml(rows, widths) {
+  let x = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cols>' + widths.map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join('') + '</cols><sheetData>';
+  rows.forEach((r, ri) => { x += `<row r="${ri + 1}">`; r.cells.forEach((v, ci) => { if (v === '' || v == null) return; x += typeof v === 'number' ? `<c r="${colL(ci)}${ri + 1}" s="${r.s || 0}"><v>${v}</v></c>` : `<c r="${colL(ci)}${ri + 1}" s="${r.s || 0}" t="inlineStr"><is><t xml:space="preserve">${xEsc(v)}</t></is></c>`; }); x += '</row>'; });
+  return x + '</sheetData></worksheet>';
+}
+function buildXlsx() {
+  const head = [P.cls, S.title].filter(Boolean).join('　'), occ = occMap();
+  const A = [{ s: 2, cells: [head + '　一覧'] }, { s: 1, cells: ['番号', '名前', '日にち', '時間帯', '同席する先生（主・同席）', 'きょうだい'] }];
+  S.students.slice().sort(byNo).forEach(s => { const a = S.assign[s.id], d = a && DB[a.dayId], no = parseInt(toHalf(s.no), 10); A.push({ cells: [isNaN(no) ? s.no : no, s.name, d ? dayLabel(d.date) : '未定', d ? tLabel(a.t) + '～' : '', s.staff.join('・'), [...s.sibs.map(sibText), s.pair && SB[s.pair] ? 'このクラス：' + SB[s.pair].name : ''].filter(Boolean).join('、')] }); });
+  const B = [{ s: 2, cells: [head + '　日程表'] }, { s: 1, cells: ['時間帯', ...S.days.map(d => dayLabel(d.date))] }];
+  S.slots.forEach((t, i) => B.push({ cells: [tLabel(t) + '～', ...S.days.map(d => { if (isClosed(d.id, t)) return 'ー'; const o = (occ[K(d.id, i)] || [])[0], s = o && SB[o.id]; return s ? (o.first ? s.name + staffText(s) : s.name + '（つづき）') : ''; })] }));
+  const st = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="游ゴシック"/></font><font><b/><sz val="11"/><name val="游ゴシック"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFF0E5"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs></styleSheet>';
+  return zip([
+    { name: '[Content_Types].xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>' },
+    { name: '_rels/.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { name: 'xl/workbook.xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="一覧" sheetId="1" r:id="rId1"/><sheet name="日程表" sheetId="2" r:id="rId2"/></sheets></workbook>' },
+    { name: 'xl/_rels/workbook.xml.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' },
+    { name: 'xl/styles.xml', data: st },
+    { name: 'xl/worksheets/sheet1.xml', data: sheetXml(A, [6, 16, 12, 10, 20, 34]) },
+    { name: 'xl/worksheets/sheet2.xml', data: sheetXml(B, [10, ...S.days.map(() => 22)]) }
+  ], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+}
+let DL = null;
+(async () => { try { if (window.claude && typeof window.claude.use === 'function') DL = await window.claude.use('downloads'); } catch (e) { DL = null; } })();
+async function download(name, blob) {
+  name = name.replace(/[\\/:*?"<>|]/g, '_');
+  if (DL) { try { await DL.save({ filename: name, data: blob }); toast('保存しました'); return; } catch (e) { if (e && (e.code === 'declined' || e.code === 'rate_limited')) return; } }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 3000); toast('保存しました');
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-out]'); if (!b) return;
+  const k = b.dataset.out, base = fileBase();
+  if (!S.days.length || !NS()) { toast('先に日にちと時間帯を入れてください'); return; }
+  if (k === 'ttPrint' || k === 'ttPdf') { openPrint('tt'); if (k === 'ttPdf') await savePdf(); return; }
+  if (k === 'slipPrint' || k === 'slipPdf') {
+    if (!letterTargets().length) { toast(S.students.length ? 'まだ日時が決まった人がいません（「日時がまだの人の分も作る」で空らんの紙を作れます）' : '先に名前を登録してください'); return; }
+    openPrint('slip'); if (k === 'slipPdf') await savePdf(); return;
+  }
+  if (k === 'ttDocx') await download(`${base}_日程表と希望.docx`, buildTTDocx());
+  if (k === 'xlsx') await download(`${base}.xlsx`, buildXlsx());
+  if (k === 'slipDocx') {
+    const T = letterTargets();
+    if (!T.length) { toast(S.students.length ? 'まだ日時が決まった人がいません（「日時がまだの人の分も作る」で空らんの紙を作れます）' : '先に名前を登録してください'); return; }
+    await download(`${base}_お知らせ.docx`, buildSlipDocx(T));
+  }
+});
+render();
+</script>
+</body>
+</html>
