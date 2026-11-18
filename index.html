@@ -224,16 +224,31 @@ table.tt{border-collapse:collapse;min-width:100%}
 #printView{position:fixed;inset:0;background:#e9e1d8;z-index:90;overflow:auto}
 .pvbar{position:sticky;top:0;z-index:2;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 18px;background:#fff;border-bottom:1px solid var(--line)}
 .a4{width:210mm;min-height:297mm;background:#fff;margin:14px auto;box-shadow:0 2px 10px rgba(0,0,0,.18);color:#000;font-family:var(--doc);position:relative}
-.a4.tt{padding:22mm 20mm 18mm;font-size:11pt}
-.a4.tt .hd{text-align:center;margin:0 0 2mm}
-.a4.tt .pd{margin:0 0 3mm}
-.a4 table.ttb{border-collapse:collapse;width:100%;table-layout:fixed}
-.ttb th,.ttb td{border:.75pt solid #000;padding:1mm 1.5mm;font-weight:400;vertical-align:middle}
-.ttb th{font-size:15pt;height:9mm;text-align:center}
-.ttb td.t{font-size:15pt;white-space:nowrap}
-.ttb td{font-size:10.5pt;height:10mm;line-height:1.4}
-.ttb .nw{white-space:nowrap}
-.ttb td.cl{background:#e7e6e6}
+/* 日程表・希望の集約表（印刷用） */
+.a4.tt{padding:15mm 14mm 14mm;font-size:11pt}
+.a4.tt .hd{margin-bottom:4mm;border-bottom:1.5pt solid #000;padding-bottom:2mm}
+.a4.tt .h1{font-size:17pt;font-weight:700;text-align:center;letter-spacing:.05em}
+.a4.tt .sub{display:flex;justify-content:space-between;gap:4mm;font-size:10.5pt;margin-top:2mm;flex-wrap:wrap}
+table.ttb{border-collapse:collapse;width:100%;table-layout:fixed}
+.ttb col.ct{width:24mm}
+.ttb th,.ttb td{border:.75pt solid #666;padding:1.2mm 2mm;vertical-align:middle;font-weight:400}
+.ttb thead th{background:#e9e9e9;font-size:13pt;font-weight:700;height:11mm;text-align:center;border-bottom:1.5pt solid #000}
+.ttb thead th small{font-size:10pt;font-weight:400;margin-left:.5mm}
+.ttb tbody th.t{font-size:13pt;font-weight:700;text-align:center;background:#f4f4f4;white-space:nowrap}
+.ttb tbody tr:nth-child(even) td{background:#fafafa}
+.ttb.plan td{height:15mm;text-align:center}
+.ttb .nm{font-size:14pt;font-weight:700;line-height:1.25}
+.ttb .st{font-size:10pt;margin-top:.8mm}
+.ttb .mn{background:#fff176;padding:0 1mm;border-radius:1mm}
+.ttb .nm2{font-size:11pt;color:#555}
+.ttb tbody td.cl{background:repeating-linear-gradient(135deg,#e2e2e2 0 2mm,#f1f1f1 2mm 4mm);color:#888;text-align:center}
+.ttb tfoot th,.ttb tfoot td{font-size:11pt;text-align:center;background:#f4f4f4;height:8mm;font-weight:700}
+.ttb.wish td{height:12mm;font-size:10.5pt;line-height:1.6}
+.ttb .w{display:inline-block;white-space:nowrap;margin-right:2.2mm}
+.ttb .w.dec{background:#fff176;font-weight:700;padding:0 1mm;border-radius:1mm}
+.ttb .w0{color:#999;font-size:9.5pt}
+.pvzoom{zoom:.6;width:max-content;margin:0 auto}
+.pvzoom .a4{margin:0}
 .a4.slips{height:297mm;padding:12.7mm 12.7mm 0}
 table.slipt{border-collapse:collapse;width:100%;table-layout:fixed}
 .slipt td{border:1pt solid #000;height:66.5mm;vertical-align:top;padding:2mm 2.5mm;overflow:hidden}
@@ -388,7 +403,7 @@ footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
       <p class="hint">1ページ目に決まった日程表（名前と同席する先生）、2ページ目に希望の集約表（○の人の名前、決まった人は黄色）が入ります。印刷ページでは、印刷の画面で「PDFに保存」も選べます。</p>
       <div class="btns row"><button class="btn pri" data-out="ttPrint">🖨 印刷ページを開く</button><button class="btn" data-out="ttPdf">PDFで保存</button><span class="sp"></span><button class="btn sm" data-out="ttDocx">Word</button><button class="btn sm" data-out="xlsx">Excel</button></div>
       <h3>見本（1ページ目）</h3>
-      <div class="pvbox"><div class="pvtt" id="pvTT"></div></div>
+      <div class="pvbox" id="pvTT"></div>
     </div>
     <div class="card">
       <h2>保護者へのお知らせ（連絡帳用）</h2>
@@ -1076,7 +1091,7 @@ function fillTpl(str, s) {
 }
 function period() {   // 期間：８月28日（金）31日（月）
   let last = -1;
-  return S.days.map(d => { const x = parseYmd(d.date); if (!x) return '日にち未定'; const m = x.getMonth(); const r = `${m !== last ? zen(m + 1) + '月' : ''}${x.getDate()}日（${WD[x.getDay()]}）`; last = m; return r; }).join('');
+  return S.days.map(d => { const x = parseYmd(d.date); if (!x) return '日にち未定'; const m = x.getMonth(); const r = `${m !== last ? (m + 1) + '月' : ''}${x.getDate()}日（${WD[x.getDay()]}）`; last = m; return r; }).join('・');
 }
 function letterTargets() { return S.students.filter(s => S.letterAll || S.assign[s.id]).sort(byNo); }
 function renderOut() {
@@ -1087,28 +1102,38 @@ function renderOut() {
   $('#letterCount').innerHTML = `${T.length}人分（A4 ${Math.ceil(T.length / 8)}枚）` + (na ? (S.letterAll ? `　うち${na}人は日時が空らん` : `　まだ決まっていない${na}人は入りません`) : '');
   previewTT(); previewSlip();
 }
+function dayHead(d) { const x = parseYmd(d.date); return x ? `${x.getMonth() + 1}月${x.getDate()}日<small>（${WD[x.getDay()]}）</small>` : '日にち未定'; }
 function ttTableHtml(mode) {   // mode: plan（決まった日程）／wish（希望の集約）
   const occ = occMap();
-  let h = `<table class="ttb"><colgroup><col style="width:22%"><col style="width:13%">${S.days.map(() => '<col>').join('')}</colgroup><tr><th rowspan="3">時間帯</th><th>月</th>`;
-  monthGroups().forEach(g => h += `<th colspan="${g.n}">${g.m ? zen(g.m) + '月' : ''}</th>`);
-  h += `</tr><tr><th>日</th>${S.days.map(d => `<th>${parseYmd(d.date) ? parseYmd(d.date).getDate() : ''}</th>`).join('')}</tr><tr><th>曜日</th>${S.days.map(d => `<th>${parseYmd(d.date) ? WD[parseYmd(d.date).getDay()] : ''}</th>`).join('')}</tr>`;
+  let h = `<table class="ttb ${mode}"><colgroup><col class="ct">${S.days.map(() => '<col>').join('')}</colgroup><thead><tr><th>時間</th>${S.days.map(d => `<th>${dayHead(d)}</th>`).join('')}</tr></thead><tbody>`;
   S.slots.forEach((t, i) => {
-    h += `<tr><td class="t" colspan="2">${esc(tDoc(t))}～</td>`;
+    h += `<tr><th class="t">${esc(tLabel(t))}～</th>`;
     S.days.forEach(d => {
-      if (isClosed(d.id, t)) { h += '<td class="cl"></td>'; return; }
-      let c = '';
-      if (mode === 'plan') { const x = (occ[K(d.id, i)] || [])[0], s = x && SB[x.id]; if (s) c = x.first ? esc(s.name) + staffHtml(s) : esc(s.name) + '（つづき）'; }
-      else c = S.students.filter(s => s.done && s.ok[K(d.id, t)]).sort(byNo).map(s => { const a = S.assign[s.id], on = a && a.dayId === d.id && slotsOf(s, aIdx(a)).includes(i); return `<span class="nw">${on ? `<mark>${esc(s.name)}</mark>` : esc(s.name)}</span>`; }).join('・<wbr>');
-      h += `<td>${c}</td>`;
+      if (isClosed(d.id, t)) { h += '<td class="cl">ー</td>'; return; }
+      if (mode === 'plan') {
+        const x = (occ[K(d.id, i)] || [])[0], s = x && SB[x.id];
+        if (!s) { h += '<td></td>'; return; }
+        if (!x.first) { h += `<td><div class="nm2">${esc(s.name)}（つづき）</div></td>`; return; }
+        const p = staffParts(s);
+        h += `<td><div class="nm">${esc(s.name)}</div>${p.length ? `<div class="st">${p.map(q => q.main ? `<span class="mn">${esc(q.n)}</span>` : esc(q.n)).join('・')}</div>` : ''}</td>`;
+      } else {
+        const L = S.students.filter(s => s.done && s.ok[K(d.id, t)]).sort(byNo);
+        h += `<td>${L.length ? L.map(s => { const a = S.assign[s.id], on = a && a.dayId === d.id && slotsOf(s, aIdx(a)).includes(i); return `<span class="w ${on ? 'dec' : ''}">${esc(s.name)}</span>`; }).join('') : '<span class="w0">—</span>'}</td>`;
+      }
     });
     h += '</tr>';
   });
+  h += '</tbody>';
+  if (mode === 'plan') h += `<tfoot><tr><th>人数</th>${S.days.map(d => `<td>${dayCount(d.id)}人</td>`).join('')}</tr></tfoot>`;
   return h + '</table>';
 }
-const ttHead = () => `<p class="hd">${esc(P.cls)}　${esc(S.title)}について</p><p class="pd">期間：${esc(period())}</p>`;
+function ttHead(mode) {
+  const lg = mode === 'plan' ? '<span><span class="mn" style="background:#fff176;padding:0 1mm">黄色</span>＝主に話す先生</span>' : '<span>その時間帯に来られる人（<span style="background:#fff176;padding:0 1mm;font-weight:700">黄色</span>＝決まった人）</span>';
+  return `<div class="hd"><div class="h1">${esc([P.cls, S.title, mode === 'plan' ? '日程表' : '希望の集約表'].filter(Boolean).join('　'))}</div><div class="sub"><span>期間：${esc(period())}</span>${lg}</div></div>`;
+}
 function previewTT() {
   if (!S.days.length || !NS()) { $('#pvTT').innerHTML = '<p>日にちと時間帯を入れてください</p>'; return; }
-  $('#pvTT').innerHTML = ttHead() + ttTableHtml('plan');
+  $('#pvTT').innerHTML = `<div class="pvzoom"><div class="a4 tt">${ttHead('plan')}${ttTableHtml('plan')}</div></div>`;
 }
 function slipHtml(s, L) { return `<div class="slip" style="font-family:'${esc(L.font)}',var(--doc);font-size:${L.size * 1.25}px;line-height:${L.size * 1.25 * 1.42}px"><p>${esc(fillTpl(L.to, s))}</p><p class="c">${esc(fillTpl(L.title, s))}</p><p class="r">${esc(fillTpl(L.from, s))}</p>${String(L.body).split('\n').map(x => `<p>${esc(fillTpl(x, s))}</p>`).join('')}<p>${esc(fillTpl(L.when, s))}</p></div>`; }
 function previewSlip() { const L = getL(), T = letterTargets(); $('#pvSlip').innerHTML = (T.length ? T.slice(0, 2) : [{ id: '', name: '高橋', no: '' }]).map(s => slipHtml(s, L)).join(''); }
@@ -1122,7 +1147,7 @@ const inFrame = (() => { try { return window.self !== window.top; } catch (e) { 
 let pvKind = '';
 function slipCellHtml(s, L) { if (!s) return '<td></td>'; return `<td><p>${esc(fillTpl(L.to, s))}</p><p class="c">${esc(fillTpl(L.title, s))}</p><p class="r">${esc(fillTpl(L.from, s))}</p>${String(L.body).split('\n').map(x => `<p>${esc(fillTpl(x, s))}</p>`).join('')}<p>${esc(fillTpl(L.when, s))}</p></td>`; }
 function pagesHtml(kind) {
-  if (kind === 'tt') return `<div class="a4 tt">${ttHead()}${ttTableHtml('plan')}</div><div class="a4 tt"><p class="pd">希望</p>${ttTableHtml('wish')}</div>`;
+  if (kind === 'tt') return `<div class="a4 tt">${ttHead('plan')}${ttTableHtml('plan')}</div><div class="a4 tt">${ttHead('wish')}${ttTableHtml('wish')}</div>`;
   const L = getL(), T = letterTargets(), st = `font-family:'${esc(L.font)}',var(--doc);font-size:${L.size}pt;line-height:${(L.size * 1.42).toFixed(1)}pt`;
   let h = '';
   for (let i = 0; i < T.length; i += 8) {
@@ -1214,35 +1239,36 @@ function docxFile(body, sect, font) {
 }
 /* 日程表（plan）と希望の集約表（wish）：見本と同じ組み方 */
 function ttTableXml(mode) {
-  const F = 'UD デジタル 教科書体 N-R', big = { font: F, sz: 16 }, small = { font: F, sz: 11 };
-  const n = Math.max(1, S.days.length), c0 = 2122, c1 = 1842, dw = Math.max(900, Math.floor((8494 - c0 - c1) / n)), occ = occMap();
-  let x = `<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/>${BORDERS(4)}<w:tblLayout w:type="fixed"/><w:tblLook w:val="04A0"/></w:tblPr><w:tblGrid><w:gridCol w:w="${c0}"/><w:gridCol w:w="${c1}"/>${S.days.map(() => `<w:gridCol w:w="${dw}"/>`).join('')}</w:tblGrid>`;
-  const hRow = c => `<w:tr><w:trPr><w:trHeight w:val="567"/></w:trPr>${c}</w:tr>`;
-  x += hRow(wtc(wp(wr('時間帯', big), { jc: 'center' }), { w: c0, vm: 'start', va: 'top' }) + wtc(wp(wr('月', big), { jc: 'center' }), { w: c1 }) + monthGroups().map(g => wtc(wp(wr(g.m ? zen(g.m) + '月' : '', big), { jc: 'center' }), { w: dw * g.n, span: g.n > 1 ? g.n : 0 })).join(''));
-  x += hRow(wtc('', { w: c0, vm: 'cont' }) + wtc(wp(wr('日', big), { jc: 'center' }), { w: c1 }) + S.days.map(d => wtc(wp(wr(parseYmd(d.date) ? String(parseYmd(d.date).getDate()) : '', big), { jc: 'center' }), { w: dw })).join(''));
-  x += hRow(wtc('', { w: c0, vm: 'cont' }) + wtc(wp(wr('曜日', big), { jc: 'center' }), { w: c1 }) + S.days.map(d => wtc(wp(wr(parseYmd(d.date) ? WD[parseYmd(d.date).getDay()] : '', big), { jc: 'center' }), { w: dw })).join(''));
+  const F = 'UD デジタル 教科書体 N-R', hd = { font: F, sz: 13, b: true }, tm = { font: F, sz: 13, b: true }, nm = { font: F, sz: 14, b: true }, sm = { font: F, sz: 10 }, ws = { font: F, sz: 10.5 };
+  const n = Math.max(1, S.days.length), c0 = 1360, dw = Math.floor((9638 - c0) / n), occ = occMap();
+  let x = `<w:tbl><w:tblPr><w:tblW w:w="${c0 + dw * n}" w:type="dxa"/>${BORDERS(4)}<w:tblLayout w:type="fixed"/><w:tblLook w:val="04A0"/></w:tblPr><w:tblGrid><w:gridCol w:w="${c0}"/>${S.days.map(() => `<w:gridCol w:w="${dw}"/>`).join('')}</w:tblGrid>`;
+  x += `<w:tr><w:trPr><w:tblHeader/><w:trHeight w:val="620"/></w:trPr>${wtc(wp(wr('時間', hd), { jc: 'center' }), { w: c0, shade: 'E9E9E9' })}${S.days.map(d => { const q = parseYmd(d.date); return wtc(wp(q ? wr(`${q.getMonth() + 1}月${q.getDate()}日`, hd) + wr(`（${WD[q.getDay()]}）`, { font: F, sz: 10 }) : wr('日にち未定', hd), { jc: 'center' }), { w: dw, shade: 'E9E9E9' }); }).join('')}</w:tr>`;
   S.slots.forEach((t, i) => {
-    let r = wtc(wp(wr(tDoc(t) + '～', big)), { w: c0 + c1, span: 2 });
+    let r = wtc(wp(wr(tLabel(t) + '～', tm), { jc: 'center' }), { w: c0, shade: 'F4F4F4' });
     S.days.forEach(d => {
-      let runs = '';
+      if (isClosed(d.id, t)) { r += wtc(wp(wr('ー', ws), { jc: 'center' }), { w: dw, shade: 'E2E2E2' }); return; }
+      let c = '';
       if (mode === 'plan') {
         const o = (occ[K(d.id, i)] || [])[0], s = o && SB[o.id];
-        if (s) runs = o.first ? wr(s.name, small) + (staffParts(s).length ? wr('（', small) + staffParts(s).map((st, k) => (k ? wr('・', small) : '') + wr(st.n, Object.assign({ hl: st.main }, small))).join('') + wr('）', small) : '') : wr(s.name + '（つづき）', small);
-      } else if (!isClosed(d.id, t)) {
-        const names = S.students.filter(s => s.done && s.ok[K(d.id, t)]).sort(byNo);
-        runs = names.map((s, k) => { const a = S.assign[s.id], on = a && a.dayId === d.id && slotsOf(s, aIdx(a)).includes(i); return (k ? wr('・', small) : '') + wr(s.name, Object.assign({ hl: on }, small)); }).join('');
+        if (s && !o.first) c = wp(wr(s.name + '（つづき）', ws), { jc: 'center' });
+        else if (s) { const p = staffParts(s); c = wp(wr(s.name, nm), { jc: 'center' }) + (p.length ? wp(p.map((q, k) => (k ? wr('・', sm) : '') + wr(q.n, Object.assign({ hl: q.main }, sm))).join(''), { jc: 'center' }) : ''); }
+      } else {
+        const L = S.students.filter(s => s.done && s.ok[K(d.id, t)]).sort(byNo);
+        c = wp(L.map((s, k) => { const a = S.assign[s.id], on = a && a.dayId === d.id && slotsOf(s, aIdx(a)).includes(i); return (k ? wr('　', ws) : '') + wr(s.name, Object.assign({ hl: on, b: on }, ws)); }).join(''));
       }
-      r += wtc(wp(runs), { w: dw, va: 'top', shade: isClosed(d.id, t) ? 'E7E6E6' : '' });
+      r += wtc(c, { w: dw });
     });
-    x += `<w:tr><w:trPr><w:trHeight w:val="567"/></w:trPr>${r}</w:tr>`;
+    x += `<w:tr><w:trPr><w:cantSplit/><w:trHeight w:val="${mode === 'plan' ? 850 : 680}"/></w:trPr>${r}</w:tr>`;
   });
+  if (mode === 'plan') x += `<w:tr><w:trPr><w:trHeight w:val="454"/></w:trPr>${wtc(wp(wr('人数', hd), { jc: 'center' }), { w: c0, shade: 'F4F4F4' })}${S.days.map(d => wtc(wp(wr(dayCount(d.id) + '人', { font: F, sz: 11, b: true }), { jc: 'center' }), { w: dw, shade: 'F4F4F4' })).join('')}</w:tr>`;
   return x + '</w:tbl>';
 }
 function buildTTDocx() {
-  const F = 'UD デジタル 教科書体 N-R', o = { font: F, sz: 11 };
-  const body = wp(wr(`${P.cls}　${S.title}について`, o), { jc: 'center' }) + wp(wr(`期間：${period()}`, o), { after: 120 }) + ttTableXml('plan') +
-    wp(wr('希望', o), { pb: true, after: 60 }) + ttTableXml('wish') + wp('');
-  return docxFile(body, '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1985" w:right="1701" w:bottom="1701" w:left="1701" w:header="851" w:footer="992" w:gutter="0"/><w:cols w:space="425"/><w:docGrid w:type="lines" w:linePitch="360"/></w:sectPr>', F);
+  const F = 'UD デジタル 教科書体 N-R';
+  const head = mode => wp(wr([P.cls, S.title, mode === 'plan' ? '日程表' : '希望の集約表'].filter(Boolean).join('　'), { font: F, sz: 17, b: true }), { jc: 'center', after: 60 }) +
+    wp(wr(`期間：${period()}　　`, { font: F, sz: 10.5 }) + (mode === 'plan' ? wr('黄色', { font: F, sz: 10.5, hl: true }) + wr('＝主に話す先生', { font: F, sz: 10.5 }) : wr('その時間帯に来られる人（', { font: F, sz: 10.5 }) + wr('黄色', { font: F, sz: 10.5, hl: true, b: true }) + wr('＝決まった人）', { font: F, sz: 10.5 })), { after: 120 });
+  const body = head('plan') + ttTableXml('plan') + head('wish').replace('<w:pPr>', '<w:pPr><w:pageBreakBefore/>') + ttTableXml('wish') + wp('');
+  return docxFile(body, '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/><w:cols w:space="425"/></w:sectPr>', F);
 }
 /* お知らせ：A4に2列×4段（見本の枠 約9.0cm×6.8cm） */
 function buildSlipDocx(list) {
