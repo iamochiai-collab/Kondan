@@ -479,8 +479,14 @@ function norm(o) {
   s.days = (Array.isArray(s.days) ? s.days : []).filter(x => x && x.id).map(x => ({ id: x.id, date: x.date || '' }));
   s.slots = normSlots(s.slots);
   ['closed', 'assign'].forEach(k => { if (!s[k] || typeof s[k] !== 'object') s[k] = {}; });
-  s.students = (Array.isArray(s.students) ? s.students : []).filter(x => x && x.id).map(x => Object.assign({ no: '', name: '', staff: [], mult: 1, ng: {}, sibs: [], pair: '', done: false }, x));
-  s.students.forEach(x => { if (!x.ng || typeof x.ng !== 'object') x.ng = {}; if (!Array.isArray(x.sibs)) x.sibs = []; if (!Array.isArray(x.staff)) x.staff = splitStaff(x.staff); });
+  s.students = (Array.isArray(s.students) ? s.students : []).filter(x => x && x.id).map(x => Object.assign({ no: '', name: '', staff: [], mult: 1, sibs: [], pair: '', done: false }, x));
+  s.students.forEach(x => {
+    if (!x.ok || typeof x.ok !== 'object') {   // 前の形（×を記録）から、○を記録する形へ
+      x.ok = {}; const ng = x.ng || {};
+      if (x.done) s.days.forEach(d => s.slots.forEach(t => { if (!ng[d.id + '|' + t]) x.ok[d.id + '|' + t] = 1; }));
+    }
+    delete x.ng;
+    if (!Array.isArray(x.sibs)) x.sibs = []; if (!Array.isArray(x.staff)) x.staff = splitStaff(x.staff); });
   if (!s.pref || typeof s.pref !== 'object') s.pref = { days: '', gap: '' };
   return s;
 }
@@ -530,7 +536,7 @@ function check(s, d, i) {
   for (let k = i; k < i + multOf(s); k++) {
     const t = S.slots[k];
     if (isClosed(d.id, t)) return 'closed';
-    if (s.done && s.ng[K(d.id, t)]) return 'ng';
+    if (s.done && !s.ok[K(d.id, t)]) return 'ng';
     if (s.sibs.some(b => b.dayId === d.id && b.t === t)) return 'sib';
   }
   return '';
@@ -677,7 +683,7 @@ $('#dataFile').onchange = async e => {
 
 /* ========== 1 名前と先生 ========== */
 function nextNo() { let m = 0; S.students.forEach(s => { const n = parseInt(toHalf(s.no), 10); if (n > m) m = n; }); return String(m + 1); }
-const newStudent = (name, no, staff) => ({ id: uid(), no: no || nextNo(), name: name || '', staff: staff || [], mult: 1, ng: {}, sibs: [], pair: '', done: false });
+const newStudent = (name, no, staff) => ({ id: uid(), no: no || nextNo(), name: name || '', staff: staff || [], mult: 1, ok: {}, sibs: [], pair: '', done: false });
 function renderNames() {
   if (document.activeElement !== $('#clsIn')) $('#clsIn').value = P.cls;
   if (document.activeElement !== $('#staffIn')) $('#staffIn').value = P.staff.join(' ');
@@ -792,7 +798,7 @@ function renderWishMain() {
     g += `<button class="rh" data-wrow="${t}">${tLabel(t)}～</button>`;
     S.days.forEach(d => {
       if (isClosed(d.id, t)) { g += '<span class="wc cl" style="display:grid;place-items:center">ー</span>'; return; }
-      const x = !!s.ng[K(d.id, t)], sib = s.sibs.some(b => b.dayId === d.id && b.t === t);
+      const x = !s.ok[K(d.id, t)], sib = s.sibs.some(b => b.dayId === d.id && b.t === t);
       g += `<button class="wc ${x ? 'x' : ''} ${sib ? 'sib' : ''}" data-k="${K(d.id, t)}" title="${sib ? 'きょうだいの' + kw() : ''}">${x ? '×' : '○'}</button>`;
     });
   });
@@ -810,7 +816,7 @@ function renderWishMain() {
       <span class="legend"><span><i style="background:var(--ok-l);border:1px solid #bfe3cc"></i>○ 来られる</span><span><i style="background:var(--ng-l);border:1px solid #f2c4c4"></i>× 来られない</span><span><i style="background:#f1ece6"></i>ー 使わない時間</span></span>
       <button class="btn sm" data-wall="0">ぜんぶ○</button><button class="btn sm" data-wall="1">ぜんぶ×</button>
     </div>
-    ${g}<p class="hint">マスを押すと ○×が切りかわります（なぞってもOK）。日にち・時間帯を押すと、その列・行をまとめて切りかえます。</p>
+    ${g}<p class="hint">最初はぜんぶ×です。来られる時間帯のマスを押して○にします（なぞってもOK）。日にち・時間帯を押すと、その列・行をまとめて○にできます。</p>
     <div class="wbar">
       <label class="wb"><span>${kw()}の長さ</span><select id="wDur">${[1, 2, 3].map(m => `<option value="${m}" ${multOf(s) === m ? 'selected' : ''}>${m}コマ${m === 1 ? '（ふつう）' : '続けて'}</option>`).join('')}</select></label>
       <label class="wb"><span>時刻の指定</span><span class="row" style="gap:4px"><select id="wFixDay"><option value="">しない</option>${S.days.map(d => `<option value="${d.id}" ${fixDay === d.id ? 'selected' : ''}>${esc(dayLabel(d.date))}</option>`).join('')}</select>${fixDay ? `<select id="wFixTime">${S.slots.map(t => `<option value="${t}" ${a.t === t ? 'selected' : ''}>${tLabel(t)}～</option>`).join('')}</select>` : ''}</span></label>
@@ -819,28 +825,28 @@ function renderWishMain() {
       <button class="btn pri" data-wnav="1">次の人へ ▶</button>
     </div>`;
 }
-function setCell(s, c, v) { if (v) s.ng[c.dataset.k] = 1; else delete s.ng[c.dataset.k]; c.classList.toggle('x', v); c.textContent = v ? '×' : '○'; }
+function setCell(s, c, ok) { if (ok) s.ok[c.dataset.k] = 1; else delete s.ok[c.dataset.k]; c.classList.toggle('x', !ok); c.textContent = ok ? '○' : '×'; }
 let paint = null, lastPtr = 'mouse';
 $('#wishList').addEventListener('click', e => { const b = e.target.closest('.sitem'); if (!b) return; wishId = b.dataset.id; renderWish(); });
 $('#wishMain').addEventListener('pointerdown', e => {
   lastPtr = e.pointerType || 'mouse';
   const c = e.target.closest('button.wc'); if (!c || lastPtr !== 'mouse') return;
-  e.preventDefault(); const s = SB[wishId], v = !s.ng[c.dataset.k]; setCell(s, c, v); paint = { v }; s.done = true;
+  e.preventDefault(); const s = SB[wishId], v = !s.ok[c.dataset.k]; setCell(s, c, v); paint = { v }; s.done = true;
 });
 window.addEventListener('pointermove', e => {
   if (!paint) return; const el = document.elementFromPoint(e.clientX, e.clientY), c = el && el.closest && el.closest('button.wc');
-  if (c) { const s = SB[wishId]; if (!!s.ng[c.dataset.k] !== paint.v) setCell(s, c, paint.v); }
+  if (c) { const s = SB[wishId]; if (!!s.ok[c.dataset.k] !== paint.v) setCell(s, c, paint.v); }
 });
 window.addEventListener('pointerup', () => { if (paint) { paint = null; save(); renderWish(); } });
 $('#wishMain').addEventListener('click', e => {
   const s = SB[wishId]; if (!s) return;
   const c = e.target.closest('button.wc');
-  if (c) { if (lastPtr === 'mouse') return; setCell(s, c, !s.ng[c.dataset.k]); s.done = true; save(); renderWish(); return; }
-  const flip = cs => { const anyOk = cs.some(x => !s.ng[x.dataset.k]); cs.forEach(x => setCell(s, x, anyOk)); s.done = true; save(); renderWish(); };
+  if (c) { if (lastPtr === 'mouse') return; setCell(s, c, !s.ok[c.dataset.k]); s.done = true; save(); renderWish(); return; }
+  const flip = cs => { const anyX = cs.some(x => !s.ok[x.dataset.k]); cs.forEach(x => setCell(s, x, anyX)); s.done = true; save(); renderWish(); };
   const wr = e.target.closest('[data-wrow]'); if (wr) { flip($$('#wGrid button.wc').filter(x => x.dataset.k.endsWith('|' + wr.dataset.wrow))); return; }
   const wd = e.target.closest('[data-wday]'); if (wd) { flip($$('#wGrid button.wc').filter(x => x.dataset.k.startsWith(wd.dataset.wday + '|'))); return; }
   const wa = e.target.closest('[data-wall]');
-  if (wa) { s.ng = {}; if (wa.dataset.wall === '1') S.days.forEach(d => S.slots.forEach(t => s.ng[K(d.id, t)] = 1)); s.done = true; save(); renderWish(); return; }
+  if (wa) { s.ok = {}; if (wa.dataset.wall === '0') S.days.forEach(d => S.slots.forEach(t => s.ok[K(d.id, t)] = 1)); s.done = true; save(); renderWish(); return; }
   if (e.target.id === 'wNext') {
     const L = S.students, k0 = L.findIndex(x => x.id === s.id);
     for (let q = 1; q <= L.length; q++) { const x = L[(k0 + q) % L.length]; if (!x.done) { wishId = x.id; renderWish(); return; } }
@@ -898,7 +904,7 @@ async function openSib(s) {
 /* 全員の○× */
 let aggSort = 'no';
 function aggCols() { const c = []; S.days.forEach(d => S.slots.forEach((t, k) => c.push({ d, t, first: k === 0 }))); return c; }
-function cellState(s, d, t) { if (isClosed(d.id, t)) return 'b'; if (!s.done) return 'u'; return s.ng[K(d.id, t)] ? 'x' : 'o'; }
+function cellState(s, d, t) { if (isClosed(d.id, t)) return 'b'; if (!s.done) return 'u'; return s.ok[K(d.id, t)] ? 'o' : 'x'; }
 const okCount = (s, cols) => cols.filter(c => cellState(s, c.d, c.t) === 'o').length;
 const MARK = { o: '○', x: '×', u: '・', b: 'ー' };
 function renderWishAll() {
@@ -906,7 +912,7 @@ function renderWishAll() {
   if (aggSort === 'few') L.sort((a, b) => (a.done ? okCount(a, cols) : 999) - (b.done ? okCount(b, cols) : 999) || byNo(a, b));
   let t = `<div class="row"><h2 style="margin:0">全員の○×</h2><span class="tag ${rec === L.length ? 'ok' : 'no'}">受け取った ${rec}/${L.length}人</span><span class="sp"></span>
     <button class="btn sm ${aggSort === 'no' ? 'on' : ''}" data-agsort="no">番号順</button><button class="btn sm ${aggSort === 'few' ? 'on' : ''}" data-agsort="few">○が少ない順</button></div>
-    <p class="hint">マスを押すと ○× を直せます（紙で受け取った希望をここで入れてもOK）。名前を押すと1人ずつの画面に移ります。「・」はまだ受け取っていない人です。</p>
+    <p class="hint">マスを押すと ○ と × が切りかわります（まだの人は、押したマスだけが○になり、ほかは×のまま）。紙で受け取った希望をここで入れてもOKです。名前を押すと1人ずつの画面に移ります。「・」はまだ受け取っていない人です。</p>
     <div class="aggwrap"><table class="agg"><thead><tr><th class="stk" rowspan="2" style="padding-left:8px">名前</th><th rowspan="2" class="cnt">○の数</th>`;
   S.days.forEach(d => t += `<th colspan="${NS()}" class="dhd dsep">${esc(dayLabel(d.date))}</th>`);
   t += '</tr><tr>' + cols.map(c => `<th class="${c.first ? 'dsep' : ''}">${tLabel(c.t)}</th>`).join('') + '</tr></thead><tbody>';
@@ -928,8 +934,8 @@ $('#wishAll').addEventListener('click', e => {
   const nm = e.target.closest('[data-agname]'); if (nm) { wishId = nm.dataset.agname; wishView = 'one'; renderWish(); $('#main').scrollTop = 0; return; }
   const c = e.target.closest('td.c'); if (!c || c.classList.contains('b')) return;
   const s = SB[c.dataset.ags], col = aggCols()[+c.dataset.agc]; if (!s || !col) return;
-  const k = K(col.d.id, col.t), cur = s.done && s.ng[k];
-  if (cur) delete s.ng[k]; else s.ng[k] = 1; s.done = true; save(); render();
+  const k = K(col.d.id, col.t), cur = s.done && s.ok[k];
+  if (cur) delete s.ok[k]; else s.ok[k] = 1; s.done = true; save(); render();
 });
 
 /* ========== 4 日程の調整（見本と同じ形の表） ========== */
@@ -1062,7 +1068,7 @@ function ttTableHtml(mode) {   // mode: plan（決まった日程）／wish（�
       if (isClosed(d.id, t)) { h += '<td class="cl"></td>'; return; }
       let c = '';
       if (mode === 'plan') { const x = (occ[K(d.id, i)] || [])[0], s = x && SB[x.id]; if (s) c = x.first ? esc(s.name) + staffHtml(s) : esc(s.name) + '（つづき）'; }
-      else c = S.students.filter(s => s.done && !s.ng[K(d.id, t)]).sort(byNo).map(s => { const a = S.assign[s.id], on = a && a.dayId === d.id && slotsOf(s, aIdx(a)).includes(i); return `<span class="nw">${on ? `<mark>${esc(s.name)}</mark>` : esc(s.name)}</span>`; }).join('・<wbr>');
+      else c = S.students.filter(s => s.done && s.ok[K(d.id, t)]).sort(byNo).map(s => { const a = S.assign[s.id], on = a && a.dayId === d.id && slotsOf(s, aIdx(a)).includes(i); return `<span class="nw">${on ? `<mark>${esc(s.name)}</mark>` : esc(s.name)}</span>`; }).join('・<wbr>');
       h += `<td>${c}</td>`;
     });
     h += '</tr>';
@@ -1193,7 +1199,7 @@ function ttTableXml(mode) {
         const o = (occ[K(d.id, i)] || [])[0], s = o && SB[o.id];
         if (s) runs = o.first ? wr(s.name, small) + (staffParts(s).length ? wr('（', small) + staffParts(s).map((st, k) => (k ? wr('・', small) : '') + wr(st.n, Object.assign({ hl: st.main }, small))).join('') + wr('）', small) : '') : wr(s.name + '（つづき）', small);
       } else if (!isClosed(d.id, t)) {
-        const names = S.students.filter(s => s.done && !s.ng[K(d.id, t)]).sort(byNo);
+        const names = S.students.filter(s => s.done && s.ok[K(d.id, t)]).sort(byNo);
         runs = names.map((s, k) => { const a = S.assign[s.id], on = a && a.dayId === d.id && slotsOf(s, aIdx(a)).includes(i); return (k ? wr('・', small) : '') + wr(s.name, Object.assign({ hl: on }, small)); }).join('');
       }
       r += wtc(wp(runs), { w: dw, va: 'top', shade: isClosed(d.id, t) ? 'E7E6E6' : '' });
