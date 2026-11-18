@@ -506,7 +506,7 @@ footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
       <p class="hint">A4に8人分（2列×4段）。切って連絡帳に貼ります。</p>
       <div class="row"><button class="btn pri" data-out="slipPrint"><i class="ico bi i5"></i>印刷ページを開く</button><button class="btn" data-out="slipPdf">PDFで保存</button><button class="btn sm" data-out="slipDocx">Word</button></div><div class="row" style="margin-top:8px"><label class="chk"><input type="checkbox" id="lAll">日時がまだの人の分も作る（日時は空らん）</label></div>
       <p class="hint" id="letterCount"></p>
-      <h3>文面</h3>
+      <h3>文面 <span class="tag ok" id="lKind"></span></h3>
       <div class="lform" id="lform">
         <label>宛名</label><div><input type="text" data-l="to"></div>
         <label>題名</label><div><input type="text" data-l="title"></div>
@@ -641,7 +641,18 @@ const LDEF = {
   body: '　いつも本学級へのご理解・ご協力をいただき、ありがとうございます。\n　{題名}の日時が決定しましたので、お伝えします。お忙しい中恐れ入りますが、よろしくお願いいたします。',
   when: '日　時：{日付}　{開始}～', font: 'UD デジタル 教科書体 NK-R', size: 12
 };
-function normProf(o) { const p = Object.assign({ cls: '', staff: [], letter: {} }, o && typeof o === 'object' ? o : {}); if (!Array.isArray(p.staff)) p.staff = splitStaff(p.staff); if (!p.letter || typeof p.letter !== 'object') p.letter = {}; return p; }
+const LDEF_VISIT = {   // 家庭訪問のときの文面
+  body: '　いつも本学級へのご理解・ご協力をいただき、ありがとうございます。\n　{題名}の日時が決定しましたので、お知らせします。下記の日時に、ご自宅へお伺いさせていただきます。お忙しい中恐れ入りますが、よろしくお願いいたします。',
+  when: '日　時：{日付}　{開始}ごろ'
+};
+const LTEXT = ['to', 'title', 'from', 'body', 'when'];
+function normProf(o) { const p = Object.assign({ cls: '', staff: [], letter: {} }, o && typeof o === 'object' ? o : {}); if (!Array.isArray(p.staff)) p.staff = splitStaff(p.staff); if (!p.letter || typeof p.letter !== 'object') p.letter = {};
+  if (!p.letters || typeof p.letters !== 'object') {   // 文面を「個別懇談」「家庭訪問」で別々に持つ
+    p.letters = { talk: {}, visit: {} };
+    LTEXT.forEach(k => { if (p.letter[k] !== undefined) { p.letters.talk[k] = p.letter[k]; delete p.letter[k]; } });
+  }
+  ['talk', 'visit'].forEach(k => { if (!p.letters[k] || typeof p.letters[k] !== 'object') p.letters[k] = {}; });
+  return p; }
 let S = norm(store.get(KEY)), P = normProf(store.get(PKEY));
 let hist = [], fut = [], lastSnap = JSON.stringify(S);
 const persist = () => store.set(KEY, S), saveP = () => store.set(PKEY, P);
@@ -1254,7 +1265,11 @@ $('#autoBtn').onclick = async () => {
 };
 
 /* ========== 5 印刷・保存 ========== */
-function getL() { const L = Object.assign({}, LDEF); Object.keys(LDEF).forEach(k => { if (P.letter[k] !== undefined && P.letter[k] !== '') L[k] = P.letter[k]; }); L.size = +L.size || 12; return L; }
+function getL() {
+  const L = Object.assign({}, LDEF, S.kind === 'visit' ? LDEF_VISIT : {}), T = P.letters[S.kind] || {};
+  LTEXT.forEach(k => { if (T[k] !== undefined && T[k] !== '') L[k] = T[k]; });
+  ['font', 'size'].forEach(k => { if (P.letter[k] !== undefined && P.letter[k] !== '') L[k] = P.letter[k]; });
+  L.size = +L.size || 12; return L; }
 function jpDay(dt, withMonth) { const d = parseYmd(dt); if (!d) return '　　月　　日（　）'; return `${withMonth === false ? '' : zen(d.getMonth() + 1) + '月'}${zen(d.getDate())}日（${WD[d.getDay()]}）`; }
 function fillTpl(str, s) {
   const a = S.assign[s.id], d = a && DB[a.dayId];
@@ -1269,6 +1284,7 @@ function period() {   // 期間：８月28日（金）31日（月）
 function letterTargets() { return S.students.filter(s => S.letterAll || S.assign[s.id]).sort(byNo); }
 function renderOut() {
   const L = getL();
+  $('#lKind').textContent = TITLE[S.kind] + 'のとき';
   $$('#lform [data-l]').forEach(el => { if (document.activeElement !== el) el.value = L[el.dataset.l]; });
   $('#lAll').checked = !!S.letterAll;
   const T = letterTargets(), na = S.students.filter(s => !S.assign[s.id]).length;
@@ -1310,8 +1326,8 @@ function previewTT() {
 }
 function slipHtml(s, L) { return `<div class="slip" style="font-family:'${esc(L.font)}',var(--doc);font-size:${L.size * 1.25}px;line-height:${L.size * 1.25 * 1.42}px"><p>${esc(fillTpl(L.to, s))}</p><p class="c">${esc(fillTpl(L.title, s))}</p><p class="r">${esc(fillTpl(L.from, s))}</p>${String(L.body).split('\n').map(x => `<p>${esc(fillTpl(x, s))}</p>`).join('')}<p>${esc(fillTpl(L.when, s))}</p></div>`; }
 function previewSlip() { const L = getL(), T = letterTargets(); $('#pvSlip').innerHTML = (T.length ? T.slice(0, 2) : [{ id: '', name: '高橋', no: '' }]).map(s => slipHtml(s, L)).join(''); }
-$('#lform').addEventListener('input', e => { const t = e.target; if (!t.dataset.l) return; P.letter[t.dataset.l] = t.dataset.l === 'size' ? +t.value : t.value; saveP(); previewSlip(); });
-$('#resetLetter').onclick = async () => { if (!await confirmDlg('<p>お知らせの文面を、最初の文面にもどします。</p>', 'もどす', true)) return; P.letter = {}; saveP(); renderOut(); };
+$('#lform').addEventListener('input', e => { const t = e.target; if (!t.dataset.l) return; const k = t.dataset.l; if (LTEXT.includes(k)) P.letters[S.kind][k] = t.value; else P.letter[k] = k === 'size' ? +t.value : t.value; saveP(); previewSlip(); });
+$('#resetLetter').onclick = async () => { if (!await confirmDlg(`<p>${TITLE[S.kind]}のお知らせの文面を、最初の文面にもどします。</p>`, 'もどす', true)) return; P.letters[S.kind] = {}; saveP(); renderOut(); };
 $('#lAll').onchange = e => { S.letterAll = e.target.checked; save(); renderOut(); };
 function monthGroups() { const g = []; S.days.forEach(d => { const x = parseYmd(d.date), m = x ? x.getMonth() + 1 : 0; if (g.length && g[g.length - 1].m === m) g[g.length - 1].n++; else g.push({ m, n: 1 }); }); return g; }
 
