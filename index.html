@@ -398,7 +398,7 @@ footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
     </div>
   </div>
   <div class="card">
-    <h3 style="margin-top:0">名前の登録</h3>
+    <h3 style="margin-top:0">児童生徒の名前の登録</h3>
     <p class="hint">1行に1人ずつ入力して「まとめて追加」を押します。Excelの「番号」「名前」の列をそのまま貼り付けることもできます。同席する先生は、追加したあと一覧の右側で選びます。</p>
     <textarea id="bulk" rows="5" placeholder="例）&#10;高橋&#10;伊藤&#10;渡辺"></textarea>
     <div class="row" style="margin-top:8px">
@@ -408,7 +408,7 @@ footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
       <button class="btn sm" id="renum">番号を1からふり直す</button>
       <button class="btn sm danger" id="clearNames">全員消す</button>
     </div>
-    <h3>登録した人 <span class="tag ok" id="nameCnt"></span></h3>
+    <h3>登録した児童生徒 <span class="tag ok" id="nameCnt"></span></h3>
     <div class="nlist" id="nameList"></div>
     <div class="foot"><button class="btn pri" data-go="2">次へ：日にちと時間帯 →</button></div>
   </div>
@@ -800,17 +800,17 @@ function stepStatus() {
 function renderNext(L, nd, np, cap) {   // 次にやることを上に出す
   let ic = '👉', t = '', sub = '', btn = '', ok = false;
   if (page === 1) {
-    if (!L.length) { t = 'まず、クラス名・先生・名前を入れましょう'; sub = '名前はExcelから貼り付けることもできます'; }
+    if (!L.length) { t = 'まず、クラス名・先生・児童生徒の名前を入れましょう'; sub = '名前はExcelから貼り付けることもできます'; }
     else { ok = true; ic = '✅'; t = `${L.length}人を登録しました`; sub = '同席する先生も選べたら、次へ進みます'; btn = '<button class="btn pri" data-go="2">次へ：日にちと時間帯 →</button>'; }
   } else if (page === 2) {
     if (!S.days.length || !NS()) { t = '日にちと時間帯を入れましょう'; }
     else { ok = cap >= L.length; ic = ok ? '✅' : '⚠️'; t = `${S.days.length}日・${cap}枠（${L.length}人分が必要）`; sub = ok ? '会議などで入れない時間は「ー」にしておきます' : '枠が足りません。日にちか時間帯をふやしてください'; btn = '<button class="btn pri" data-go="3">次へ：希望の入力 →</button>'; }
   } else if (page === 3) {
-    if (!L.length) { t = '先に名前を登録してください'; btn = '<button class="btn" data-go="1">1. 名前と先生へ</button>'; }
+    if (!L.length) { t = '先に児童生徒の名前を登録してください'; btn = '<button class="btn" data-go="1">1. 名前と先生へ</button>'; }
     else if (nd < L.length) { t = `あと ${L.length - nd}人の希望が入っていません`; sub = `受け取った ${nd}/${L.length}人`; btn = '<button class="btn" id="nbNext">まだの人へ</button>'; }
     else { ok = true; ic = '🎉'; t = '全員の希望がそろいました'; sub = '次は、日程を決めます'; btn = '<button class="btn pri" data-go="4">次へ：日程の調整 →</button>'; }
   } else if (page === 4) {
-    if (!L.length) { t = '先に名前を登録してください'; }
+    if (!L.length) { t = '先に児童生徒の名前を登録してください'; }
     else if (np < L.length) { t = np ? `あと ${L.length - np}人が決まっていません` : '「⚡ 自動で入れる」を押すと、全員の日程を考えます'; sub = np ? '表の緑の名前を押すか、もう一度「自動で入れる」を押します' : 'そのあと、表の名前を押して手直しできます'; btn = '<button class="btn pri" id="nbAuto">⚡ 自動で入れる</button>'; }
     else { ok = true; ic = '🎉'; t = '全員の日程が決まりました'; sub = '日程表とお知らせを出しましょう'; btn = '<button class="btn pri" data-go="5">次へ：印刷・保存 →</button>'; }
   }
@@ -1215,7 +1215,7 @@ $('#clearAllBtn').onclick = async () => {
   S.assign = {}; save(); renderPlan();
 };
 $('#autoBtn').onclick = async () => {
-  if (!S.students.length) { toast('先に名前を登録してください'); return; }
+  if (!S.students.length) { toast('先に児童生徒の名前を登録してください'); return; }
   if (!S.days.length || !NS()) { toast('先に日にちと時間帯を入れてください'); return; }
   const nd = S.students.filter(s => !s.done).length;
   if (nd && !await confirmDlg(`<p>希望をまだ受け取っていない人が <b>${nd}人</b> います。その人は「どこでも○」として入れます。</p>`, '続ける')) return;
@@ -1498,14 +1498,14 @@ document.addEventListener('click', async e => {
   if (!S.days.length || !NS()) { toast('先に日にちと時間帯を入れてください'); return; }
   if (k === 'ttPrint' || k === 'ttPdf') { openPrint('tt'); if (k === 'ttPdf') await savePdf(); return; }
   if (k === 'slipPrint' || k === 'slipPdf') {
-    if (!letterTargets().length) { toast(S.students.length ? 'まだ日時が決まった人がいません（「日時がまだの人の分も作る」で空らんの紙を作れます）' : '先に名前を登録してください'); return; }
+    if (!letterTargets().length) { toast(S.students.length ? 'まだ日時が決まった人がいません（「日時がまだの人の分も作る」で空らんの紙を作れます）' : '先に児童生徒の名前を登録してください'); return; }
     openPrint('slip'); if (k === 'slipPdf') await savePdf(); return;
   }
   if (k === 'ttDocx') await download(`${base}_日程表と希望.docx`, buildTTDocx());
   if (k === 'xlsx') await download(`${base}.xlsx`, buildXlsx());
   if (k === 'slipDocx') {
     const T = letterTargets();
-    if (!T.length) { toast(S.students.length ? 'まだ日時が決まった人がいません（「日時がまだの人の分も作る」で空らんの紙を作れます）' : '先に名前を登録してください'); return; }
+    if (!T.length) { toast(S.students.length ? 'まだ日時が決まった人がいません（「日時がまだの人の分も作る」で空らんの紙を作れます）' : '先に児童生徒の名前を登録してください'); return; }
     await download(`${base}_お知らせ.docx`, buildSlipDocx(T));
   }
 });
