@@ -83,6 +83,12 @@ label.chk{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
 .stf button{border:1px solid #e6d5c4;background:#fff;border-radius:999px;padding:2px 10px;font-size:13px;color:#b5a89d;min-width:40px}
 .stf button.main{background:var(--hl);border-color:#e0c500;color:#5a4a00;font-weight:700}
 .stf button.sub{background:#fff3e9;border-color:var(--pri);color:var(--pri-d);font-weight:700}
+.stsel{width:132px;flex:none;font-size:12px;color:var(--sub);text-align:center}
+select.stsel{font-size:14px;color:var(--ink);text-align:left;padding:5px 6px}
+select.stsel.main{background:#fffbd1;border-color:#e0c500}
+.nhead{border-bottom:2px solid var(--line);font-size:12px;color:var(--sub);padding-bottom:4px}
+.nhead .no,.nhead .nm{text-align:left;padding-left:4px}
+.nhead .no{width:54px}.nhead .nm{width:180px}
 .icon{border:0;background:none;width:32px;height:32px;border-radius:8px;color:var(--sub);font-size:17px;flex:none}
 .icon:hover{background:var(--bg);color:var(--ng)}
 
@@ -282,14 +288,14 @@ footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
   <div class="card">
     <h2>1. 名前と先生</h2>
     <div class="form" style="margin-top:10px">
-      <label>クラス名</label><div class="row"><input type="text" id="clsIn" placeholder="例）高等部２組" style="width:220px"><span class="hint" style="margin:0">お知らせや日程表に「高等部２組　高橋様」のように入ります</span></div>
-      <label>先生の名前</label><div class="row"><input type="text" id="staffIn" placeholder="例）田中 佐藤 鈴木 山本" style="width:300px"><span class="hint" style="margin:0">名字だけでOK。空白か「・」で区切ります</span></div>
+      <label>クラス名</label><div class="row"><input type="text" id="clsIn" placeholder="例）1年1組" style="width:220px"><span class="hint" style="margin:0">お知らせや日程表に「1年1組　高橋様」のように入ります</span></div>
+      <label>先生の名前</label><div class="row"><input type="text" id="staffIn" placeholder="例）田中 佐藤 鈴木 山本" style="width:300px"><span class="hint" style="margin:0">名字だけでOK。空白か「・」で区切ります。下の名前の一覧で選べるようになります</span></div>
     </div>
   </div>
   <div class="card">
     <h3 style="margin-top:0">名前の登録</h3>
-    <p class="hint">1行に1人ずつ入力して「まとめて追加」を押します。Excelから「番号」「名前」「先生（田中・佐藤）」の列をそのまま貼り付けることもできます。</p>
-    <textarea id="bulk" rows="5" placeholder="例）&#10;高橋	田中・佐藤&#10;伊藤	山本・佐藤&#10;渡辺	鈴木・田中"></textarea>
+    <p class="hint">1行に1人ずつ入力して「まとめて追加」を押します。Excelの「番号」「名前」の列をそのまま貼り付けることもできます。同席する先生は、追加したあと一覧の右側で選びます。</p>
+    <textarea id="bulk" rows="5" placeholder="例）&#10;高橋&#10;伊藤&#10;渡辺"></textarea>
     <div class="row" style="margin-top:8px">
       <button class="btn pri" id="bulkAdd">まとめて追加</button>
       <button class="btn" id="oneAdd">1人追加</button>
@@ -298,7 +304,7 @@ footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
       <button class="btn sm danger" id="clearNames">全員消す</button>
     </div>
     <h3>登録した人 <span class="tag ok" id="nameCnt"></span></h3>
-    <p class="hint" id="stfHint" style="margin-top:-4px">先生の名前を押すと <mark>主に話す先生</mark> → <b style="color:var(--pri-d)">同席</b> → なし の順に変わります。</p>
+    <div class="nrow nhead" id="nameHead"><span class="no">番号</span><span class="nm">名前</span><span class="sp"></span><span class="stsel"><mark>主に話す先生</mark></span><span class="stsel">同席</span><span class="stsel">同席</span><span style="width:32px"></span></div>
     <div class="nlist" id="nameList"></div>
     <div class="foot"><button class="btn pri" data-go="2">次へ：日にちと時間帯 →</button></div>
   </div>
@@ -310,7 +316,7 @@ footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
   <div class="card">
     <h2>2. 日にちと時間帯</h2>
     <div class="form" style="margin-top:10px">
-      <label>題名</label><div class="row"><input type="text" id="titleIn" style="width:200px"><span class="hint" style="margin:0">「高等部２組　個別懇談について」「個別懇談の日時決定のお知らせ」のように入ります</span></div>
+      <label>題名</label><div class="row"><input type="text" id="titleIn" style="width:200px"><span class="hint" style="margin:0">「1年1組　個別懇談について」「個別懇談の日時決定のお知らせ」のように入ります</span></div>
     </div>
     <h3>日にち</h3>
     <div class="dlist" id="dayList"></div>
@@ -535,8 +541,9 @@ function problemsOf(id) { const a = S.assign[id], s = SB[id], d = a && DB[a.dayI
 const dayCount = dayId => Object.values(S.assign).filter(a => a.dayId === dayId).length;
 const byNo = (x, y) => (parseInt(toHalf(x.no), 10) || 9999) - (parseInt(toHalf(y.no), 10) || 9999);
 function whenShort(s) { const a = S.assign[s.id], d = a && DB[a.dayId]; return d ? `${dayLabel(d.date)} ${tLabel(a.t)}～` : '未定'; }
-function staffText(s) { return s.staff.length ? `（${s.staff.join('・')}）` : ''; }
-function staffHtml(s) { return s.staff.length ? `（${s.staff.map((x, i) => i ? esc(x) : `<mark>${esc(x)}</mark>`).join('・')}）` : ''; }
+function staffParts(s) { return s.staff.map((n, i) => ({ n, main: i === 0 })).filter(x => x.n); }   // [0]が主に話す先生（空でもよい）
+function staffText(s) { const p = staffParts(s); return p.length ? `（${p.map(x => x.n).join('・')}）` : ''; }
+function staffHtml(s) { const p = staffParts(s); return p.length ? `（${p.map(x => x.main ? `<mark>${esc(x.n)}</mark>` : esc(x.n)).join('・')}）` : ''; }
 function nearIdx(t) { const m = toMin(t); let b = -1, bd = 1e9; S.slots.forEach((x, i) => { const dd = Math.abs(toMin(x) - m); if (dd < bd) { bd = dd; b = i; } }); return b; }
 function sibText(b) { return ([b.cls, b.rel].filter(Boolean).join(' ') || 'きょうだい') + (b.t && DB[b.dayId] ? `（${dayLabel(DB[b.dayId].date)} ${tLabel(b.t)}～）` : ''); }
 function sibShort(s) { const o = s.sibs.map(b => [b.cls, b.rel].filter(Boolean).join(' ') || 'ほかのクラス'); if (s.pair && SB[s.pair]) o.push(SB[s.pair].name || 'このクラス'); return o.join('、'); }
@@ -675,13 +682,15 @@ function renderNames() {
   if (document.activeElement !== $('#clsIn')) $('#clsIn').value = P.cls;
   if (document.activeElement !== $('#staffIn')) $('#staffIn').value = P.staff.join(' ');
   $('#nameCnt').textContent = S.students.length + '人';
-  $('#stfHint').hidden = !P.staff.length;
+  $('#nameHead').hidden = !S.students.length;
   $('#nameList').innerHTML = S.students.length ? S.students.map(s => {
-    const all = [...P.staff, ...s.staff.filter(x => !P.staff.includes(x))];
+    const all = [...P.staff, ...s.staff.filter(x => x && !P.staff.includes(x))];
+    const sel = (k, cls) => `<select class="stsel ${cls}" data-st="${k}" data-id="${s.id}"><option value="">${k ? '—' : '（なし）'}</option>${all.map(x => `<option ${s.staff[k] === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select>`;
     return `<div class="nrow">
     <input type="text" class="no" data-f="no" data-id="${s.id}" value="${esc(s.no)}" title="番号" inputmode="numeric">
     <input type="text" class="nm" data-f="name" data-id="${s.id}" value="${esc(s.name)}" placeholder="名前">
-    <div class="stf">${all.map(x => { const k = s.staff.indexOf(x); return `<button data-stf="${esc(x)}" data-id="${s.id}" class="${k === 0 ? 'main' : k > 0 ? 'sub' : ''}" title="${k === 0 ? '主に話す先生' : k > 0 ? '同席' : '押すと入ります'}">${esc(x)}</button>`; }).join('') || '<span class="hint" style="margin:0">↑「先生の名前」を入れると、ここで選べます</span>'}</div>
+    <span class="sp"></span>
+    ${all.length ? sel(0, s.staff[0] ? 'main' : '') + sel(1, '') + sel(2, '') : '<span class="hint" style="margin:0">↑「先生の名前」を入れると、ここで選べます</span>'}
     <button class="icon" data-del="${s.id}" title="消す">✕</button></div>`;
   }).join('') : '<p class="empty">まだだれも登録していません</p>';
 }
@@ -703,16 +712,17 @@ $('#bulkAdd').onclick = () => {
 $('#oneAdd').onclick = () => { S.students.push(newStudent('')); save(); render(); const l = $$('#nameList .nm'); if (l.length) l[l.length - 1].focus(); };
 $('#renum').onclick = () => { S.students.forEach((s, i) => s.no = String(i + 1)); save(); render(); toast('番号をふり直しました'); };
 $('#clearNames').onclick = async () => { if (!S.students.length) return; if (!await confirmDlg(`<p>登録した${S.students.length}人を全員消します。よろしいですか？</p>`, '全員消す', true)) return; S.students = []; S.assign = {}; save(); render(); };
-$('#nameList').addEventListener('change', e => { const t = e.target, s = SB[t.dataset.id]; if (!s || !t.dataset.f) return; s[t.dataset.f] = t.dataset.f === 'no' ? toHalf(t.value.trim()) : t.value.trim(); save(); });
-$('#nameList').addEventListener('click', e => {
-  const st = e.target.closest('[data-stf]');
-  if (st) {   // なし → 主 → 同席 → なし
-    const s = SB[st.dataset.id], x = st.dataset.stf, k = s.staff.indexOf(x);
-    if (k < 0) { if (s.staff.length) s.staff.push(x); else s.staff = [x]; }
-    else if (k === 0) { s.staff.splice(0, 1); s.staff.push(x); if (s.staff.length === 1) s.staff = []; }
-    else s.staff.splice(k, 1);
+$('#nameList').addEventListener('change', e => {
+  const t = e.target, s = SB[t.dataset.id]; if (!s) return;
+  if (t.dataset.st !== undefined) {   // 主に話す先生・同席を選ぶ
+    const v = [0, 1, 2].map(k => (s.staff[k] || '')); v[+t.dataset.st] = t.value;
+    const main = v[0], subs = [...new Set(v.slice(1).filter(x => x && x !== main))];
+    s.staff = main || subs.length ? [main, ...subs] : [];
     save(); renderNames(); return;
   }
+  if (!t.dataset.f) return; s[t.dataset.f] = t.dataset.f === 'no' ? toHalf(t.value.trim()) : t.value.trim(); save();
+});
+$('#nameList').addEventListener('click', e => {
   const b = e.target.closest('[data-del]'); if (!b) return; const s = SB[b.dataset.del];
   S.students = S.students.filter(x => x.id !== s.id); save(); render(); toast(`${s.name || '名前なし'}を消しました（「もどす」で取り消せます）`);
 });
@@ -1181,7 +1191,7 @@ function ttTableXml(mode) {
       let runs = '';
       if (mode === 'plan') {
         const o = (occ[K(d.id, i)] || [])[0], s = o && SB[o.id];
-        if (s) runs = o.first ? wr(s.name, small) + (s.staff.length ? wr('（', small) + s.staff.map((st, k) => (k ? wr('・', small) : '') + wr(st, Object.assign({ hl: k === 0 }, small))).join('') + wr('）', small) : '') : wr(s.name + '（つづき）', small);
+        if (s) runs = o.first ? wr(s.name, small) + (staffParts(s).length ? wr('（', small) + staffParts(s).map((st, k) => (k ? wr('・', small) : '') + wr(st.n, Object.assign({ hl: st.main }, small))).join('') + wr('）', small) : '') : wr(s.name + '（つづき）', small);
       } else if (!isClosed(d.id, t)) {
         const names = S.students.filter(s => s.done && !s.ng[K(d.id, t)]).sort(byNo);
         runs = names.map((s, k) => { const a = S.assign[s.id], on = a && a.dayId === d.id && slotsOf(s, aIdx(a)).includes(i); return (k ? wr('・', small) : '') + wr(s.name, Object.assign({ hl: on }, small)); }).join('');
@@ -1244,7 +1254,7 @@ function sheetXml(rows, widths) {
 function buildXlsx() {
   const head = [P.cls, S.title].filter(Boolean).join('　'), occ = occMap();
   const A = [{ s: 2, cells: [head + '　一覧'] }, { s: 1, cells: ['番号', '名前', '日にち', '時間帯', '同席する先生（主・同席）', 'きょうだい'] }];
-  S.students.slice().sort(byNo).forEach(s => { const a = S.assign[s.id], d = a && DB[a.dayId], no = parseInt(toHalf(s.no), 10); A.push({ cells: [isNaN(no) ? s.no : no, s.name, d ? dayLabel(d.date) : '未定', d ? tLabel(a.t) + '～' : '', s.staff.join('・'), [...s.sibs.map(sibText), s.pair && SB[s.pair] ? 'このクラス：' + SB[s.pair].name : ''].filter(Boolean).join('、')] }); });
+  S.students.slice().sort(byNo).forEach(s => { const a = S.assign[s.id], d = a && DB[a.dayId], no = parseInt(toHalf(s.no), 10); A.push({ cells: [isNaN(no) ? s.no : no, s.name, d ? dayLabel(d.date) : '未定', d ? tLabel(a.t) + '～' : '', staffParts(s).map(x => x.n).join('・'), [...s.sibs.map(sibText), s.pair && SB[s.pair] ? 'このクラス：' + SB[s.pair].name : ''].filter(Boolean).join('、')] }); });
   const B = [{ s: 2, cells: [head + '　日程表'] }, { s: 1, cells: ['時間帯', ...S.days.map(d => dayLabel(d.date))] }];
   S.slots.forEach((t, i) => B.push({ cells: [tLabel(t) + '～', ...S.days.map(d => { if (isClosed(d.id, t)) return 'ー'; const o = (occ[K(d.id, i)] || [])[0], s = o && SB[o.id]; return s ? (o.first ? s.name + staffText(s) : s.name + '（つづき）') : ''; })] }));
   const st = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="游ゴシック"/></font><font><b/><sz val="11"/><name val="游ゴシック"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFF0E5"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs></styleSheet>';
