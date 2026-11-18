@@ -498,13 +498,16 @@ const TITLE = { talk: '個別懇談', visit: '家庭訪問' };
 function defState() {
   const t = new Date(); t.setDate(t.getDate() + 7);
   return { kind: 'talk', title: '個別懇談', days: [{ id: uid(), date: ymd(nextWeekday(t)) }],
-    slots: ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00'], closed: {}, students: [], assign: {}, pref: { days: '', gap: '' }, letterAll: false };
+    slots: DEF_SLOTS.slice(), closed: {}, students: [], assign: {}, pref: { days: '', gap: '' }, letterAll: false };
 }
+const DEF_SLOTS = ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'];   // 13時～17時
+const OLD_DEF = '13:00,13:30,14:00,14:30,15:00,15:30,16:00';
 const normSlots = a => [...new Set((a || []).map(t => { const m = toMin(t); return isNaN(m) ? null : fmt2(m); }).filter(Boolean))].sort((x, y) => toMin(x) - toMin(y));
 function norm(o) {
   const s = Object.assign(defState(), o && typeof o === 'object' ? o : {});
   s.days = (Array.isArray(s.days) ? s.days : []).filter(x => x && x.id).map(x => ({ id: x.id, date: x.date || '' }));
   s.slots = normSlots(s.slots);
+  if (s.slots.join(',') === OLD_DEF) s.slots = DEF_SLOTS.slice();   // 前の最初の時間帯（～16:00）なら、～17:00 にそろえる
   ['closed', 'assign'].forEach(k => { if (!s[k] || typeof s[k] !== 'object') s[k] = {}; });
   s.students = (Array.isArray(s.students) ? s.students : []).filter(x => x && x.id).map(x => Object.assign({ no: '', name: '', staff: [], mult: 1, sibs: [], pair: '', done: false }, x));
   s.students.forEach(x => {
