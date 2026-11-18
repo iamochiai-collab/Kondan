@@ -300,8 +300,48 @@ table.slipt{border-collapse:collapse;width:100%;table-layout:fixed}
 .pick button small{color:var(--sub);margin-left:4px}
 .sibrow{border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px;display:grid;gap:6px}
 .sibrow .row>span{font-size:13px;color:var(--sub)}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#5a463b;color:#fff;padding:9px 18px;border-radius:999px;font-size:14px;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
-#toast.show{opacity:1}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px) scale(.96);background:#5a463b;color:#fff;padding:9px 18px;border-radius:999px;font-size:14px;z-index:200;opacity:0;transition:opacity .25s,transform .35s cubic-bezier(.2,1.4,.4,1);pointer-events:none;max-width:90vw;box-shadow:0 6px 20px rgba(60,40,30,.25)}
+#toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
+
+/* ===== アニメーション ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{0%{opacity:0;transform:scale(.92) translateY(8px)}60%{opacity:1;transform:scale(1.015)}100%{transform:none}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.13)}100%{transform:scale(1)}}
+@keyframes bounce{0%{transform:scale(1)}30%{transform:scale(1.35) rotate(-8deg)}60%{transform:scale(.92)}100%{transform:scale(1)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(239,131,84,.75)}100%{box-shadow:0 0 0 14px rgba(239,131,84,0)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(239,131,84,0)}50%{box-shadow:0 0 0 6px rgba(239,131,84,.18)}}
+@keyframes fall{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+.page.enter>*{animation:fadeUp .42s cubic-bezier(.2,.8,.3,1) both}
+.page.enter>*:nth-child(2){animation-delay:.05s}.page.enter>*:nth-child(3){animation-delay:.1s}.page.enter>*:nth-child(4){animation-delay:.15s}.page.enter>*:nth-child(5){animation-delay:.2s}
+.page.enter .outgrid>*:nth-child(2){animation:fadeUp .42s .1s both}
+.nextbar.slide{animation:slideIn .4s cubic-bezier(.2,.8,.3,1) both}
+.nextbar.ok .ic{display:inline-block;animation:bounce .6s .15s both}
+.nextbar .btn.pri{animation:glow 2.2s ease-in-out infinite}
+#modal:not([hidden]){animation:fadeIn .18s ease-out}
+#modal:not([hidden]) .mbox{animation:popIn .3s cubic-bezier(.2,.9,.3,1.1)}
+#printView:not([hidden]){animation:fadeIn .2s ease-out}
+#printView:not([hidden]) .a4{animation:fadeUp .45s cubic-bezier(.2,.8,.3,1) both}
+#printView:not([hidden]) .a4:nth-child(2){animation-delay:.08s}#printView:not([hidden]) .a4:nth-child(3){animation-delay:.16s}
+.btn{transition:transform .12s,box-shadow .15s,background .15s,border-color .15s}
+.btn:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(120,80,40,.12)}
+.btn:not(:disabled):active{transform:translateY(0) scale(.97);box-shadow:none}
+.steps button i{transition:background .25s,color .25s}
+.steps button.justdone i{animation:bounce .6s both}
+.prog .bar i{transition:width .5s cubic-bezier(.2,.8,.3,1)}
+.wc.pop{animation:pop .22s ease-out}
+.sitem{transition:background .15s,box-shadow .15s}
+.dec.flash{animation:flash .7s ease-out;border-radius:6px}
+.cand{transition:transform .12s,background .15s,border-color .15s}
+.cand:hover{transform:translateY(-1px)}
+.whero .wnm.in{animation:slideIn .3s cubic-bezier(.2,.8,.3,1) both}
+.chip{animation:popIn .25s both}
+.ntab tbody tr{transition:background .15s}
+.ntab tbody tr.newrow td{animation:fadeUp .35s both}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden}
+.confetti i{position:absolute;top:var(--sy);left:var(--sx);width:9px;height:14px;border-radius:2px;animation:fall var(--d) cubic-bezier(.15,.6,.4,1) forwards}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 #busy{position:fixed;inset:0;background:rgba(255,255,255,.75);display:grid;place-items:center;z-index:150;font-weight:700;font-size:17px}
 footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
 @media (max-width:900px){
@@ -481,6 +521,17 @@ const toHalf = s => String(s || '').replace(/[０-９]/g, c => String.fromCharCo
 const zen = s => String(s).replace(/[0-9]/g, c => String.fromCharCode(c.charCodeAt(0) + 0xFEE0));
 const tLabel = t => fmt(toMin(t));                       // 13:30
 const tDoc = t => { const m = toMin(t); return `${Math.floor(m / 60)}：${pad(m % 60)}`; };  // 13：30（見本の形）
+function confetti() {
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const box = document.createElement('div'); box.className = 'confetti';
+  const C = ['#ef8354', '#f7c548', '#3a9a64', '#6aa9e9', '#e86f8f', '#9b7fd1'];
+  for (let i = 0; i < 70; i++) {
+    const e = document.createElement('i'), a = Math.random() * Math.PI - Math.PI, v = 160 + Math.random() * 320;
+    e.style.cssText = `--sx:${45 + Math.random() * 10}%;--sy:38%;--x:${Math.cos(a) * v}px;--y:${Math.sin(a) * v * 0.6 + 380 + Math.random() * 200}px;--r:${Math.random() * 900 - 450}deg;--d:${1.1 + Math.random() * .9}s;background:${C[i % C.length]};animation-delay:${Math.random() * .12}s`;
+    box.appendChild(e);
+  }
+  document.body.appendChild(box); setTimeout(() => box.remove(), 2400);
+}
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2400); }
 function busy(msg) { const b = $('#busy'); if (msg) { b.textContent = msg; b.hidden = false; } else b.hidden = true; }
 const pause = () => new Promise(r => setTimeout(r, 0));
@@ -704,7 +755,8 @@ function solve() {
 
 /* ========== 画面 ========== */
 let page = 1, wishView = 'one', wishId = null, selId = null, showPlaced = false;
-function go(p) { page = p; selId = null; render(); $('#main').scrollTop = 0; }
+function replay(el, cls) { if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+function go(p) { const changed = p !== page; page = p; selId = null; render(); $('#main').scrollTop = 0; if (changed) replay($(`.page[data-p="${p}"]`), 'enter'); }
 function render() {
   reindex();
   $$('.page').forEach(el => el.hidden = +el.dataset.p !== page);
@@ -714,10 +766,16 @@ function render() {
   stepStatus(); updHist();
   ({ 1: renderNames, 2: renderDays, 3: renderWish, 4: renderPlan, 5: renderOut })[page]();
 }
+let prevDone = {}, prevReady = false;
 function stepStatus() {
   const L = S.students, nd = L.filter(s => s.done).length, np = L.filter(s => S.assign[s.id]).length, cap = S.days.reduce((n, d) => n + S.slots.filter(t => !isClosed(d.id, t)).length, 0);
   const doneStep = { 1: L.length > 0, 2: S.days.length > 0 && NS() > 0, 3: L.length > 0 && nd === L.length, 4: L.length > 0 && np === L.length, 5: false };
-  $$('#steps button').forEach(b => b.classList.toggle('done', +b.dataset.go !== page && doneStep[+b.dataset.go]));
+  $$('#steps button').forEach(b => {
+    const n = +b.dataset.go, was = prevDone[n]; b.classList.toggle('done', n !== page && doneStep[n]);
+    if (prevReady && doneStep[n] && !was) { replay(b, 'justdone'); if (n === 3 || n === 4) confetti(); }
+    prevDone[n] = doneStep[n];
+  });
+  prevReady = true;
   $('#st1').textContent = L.length ? `${L.length}人` : 'まだ';
   $('#st2').textContent = S.days.length && NS() ? `${S.days.length}日・${cap}枠` : 'まだ';
   $('#st3').textContent = L.length ? `受け取り ${nd}/${L.length}` : '—';
@@ -744,7 +802,8 @@ function renderNext(L, nd, np, cap) {   // 次にやることを上に出す
   }
   const nb = $('#nextBar'); nb.hidden = !t; if (!t) return;
   nb.className = 'nextbar' + (ok ? ' ok' : '') + (page >= 3 ? ' wide' : '');
-  nb.innerHTML = `<span class="ic">${ic}</span><div class="tx"><b>${t}</b>${sub ? `<span>${sub}</span>` : ''}</div>${btn}`;
+  const html = `<span class="ic">${ic}</span><div class="tx"><b>${t}</b>${sub ? `<span>${sub}</span>` : ''}</div>${btn}`;
+  if (nb.dataset.t !== page + t) { nb.dataset.t = page + t; nb.innerHTML = html; replay(nb, 'slide'); } else if (nb.innerHTML !== html) nb.innerHTML = html;
 }
 $('#nextBar').addEventListener('click', e => {
   if (e.target.id === 'nbAuto') $('#autoBtn').click();
@@ -796,6 +855,7 @@ $('#dataFile').onchange = async e => {
 /* ========== 1 名前と先生 ========== */
 function nextNo() { let m = 0; S.students.forEach(s => { const n = parseInt(toHalf(s.no), 10); if (n > m) m = n; }); return String(m + 1); }
 const newStudent = (name, no, staff) => ({ id: uid(), no: no || nextNo(), name: name || '', staff: staff || [], mult: 1, ok: {}, sibs: [], pair: '', done: false });
+let newIds = new Set();
 function renderNames() {
   if (document.activeElement !== $('#clsIn')) $('#clsIn').value = P.cls;
   if (document.activeElement !== $('#staffIn')) $('#staffIn').value = P.staff.join(' ');
@@ -805,7 +865,7 @@ function renderNames() {
   const rows = S.students.map(s => {
     const all = [...P.staff, ...s.staff.filter(x => x && !P.staff.includes(x))];
     const sel = k => `<select class="${k === 0 && s.staff[0] ? 'main' : s.staff[k] ? 'on' : ''}" data-st="${k}" data-id="${s.id}" aria-label="${k ? '同席する先生' : '主に話す先生'}"><option value="">${k ? '—' : '（なし）'}</option>${all.map(x => `<option ${s.staff[k] === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select>`;
-    return `<tr>
+    return `<tr class="${newIds.has(s.id) ? 'newrow' : ''}">
       <td><input type="text" class="no" data-f="no" data-id="${s.id}" value="${esc(s.no)}" aria-label="番号" inputmode="numeric"></td>
       <td><input type="text" class="nm" data-f="name" data-id="${s.id}" value="${esc(s.name)}" placeholder="名前" aria-label="名前"></td>
       ${has ? `<td>${sel(0)}</td><td>${sel(1)}</td><td>${sel(2)}</td>` : ''}
@@ -827,7 +887,7 @@ $('#bulkAdd').onclick = () => {
     st.forEach(x => { if (!P.staff.includes(x)) P.staff.push(x); });
     S.students.push(newStudent(c[0], no, st)); n++;
   });
-  saveP(); $('#bulk').value = ''; save(); render(); toast(`${n}人追加しました`);
+  saveP(); $('#bulk').value = ''; save(); newIds = new Set(S.students.slice(-n).map(x => x.id)); render(); newIds = new Set(); toast(`${n}人追加しました`);
 };
 $('#oneAdd').onclick = () => { S.students.push(newStudent('')); save(); render(); const l = $$('#nameList .nm'); if (l.length) l[l.length - 1].focus(); };
 $('#renum').onclick = () => { S.students.forEach((s, i) => s.no = String(i + 1)); save(); render(); toast('番号をふり直しました'); };
@@ -902,8 +962,10 @@ function renderWish() {
     ${s.done ? '<span class="bdg ok">✓</span>' : ''}</button>`).join('');
   renderWishMain();
 }
+let lastWish = null;
 function renderWishMain() {
   const s = SB[wishId]; if (!s) return;
+  setTimeout(() => { lastWish = s.id; }, 0);
   const a = S.assign[s.id], fixDay = a && a.lock ? a.dayId : '';
   const nsib = s.sibs.length + (s.pair && SB[s.pair] ? 1 : 0);
   let g = `<div class="wgrid" id="wGrid" style="grid-template-columns:84px repeat(${S.days.length}, minmax(96px,1fr))"><span></span>`;
@@ -920,7 +982,7 @@ function renderWishMain() {
   $('#wishMain').innerHTML = `
     <div class="whero">
       <button class="btn" data-wnav="-1" title="前の人（←）">◀</button>
-      <span class="wno">${esc(s.no || '-')}</span><span class="wnm">${esc(s.name || '名前なし')}</span>
+      <span class="wno">${esc(s.no || '-')}</span><span class="wnm ${lastWish !== s.id ? 'in' : ''}">${esc(s.name || '名前なし')}</span>
       <span class="wpos">${S.students.indexOf(s) + 1} / ${S.students.length}人目</span>
       <span class="wst" style="color:${s.done ? 'var(--ok)' : 'var(--warn)'}">${s.done ? `✓ 入力ずみ（○ ${S.days.reduce((n, d) => n + S.slots.filter(t => s.ok[K(d.id, t)] && !isClosed(d.id, t)).length, 0)}こ）` : 'まだ入力していません'}</span>
       <span class="sp"></span>
@@ -943,7 +1005,7 @@ function renderWishMain() {
       <button class="btn pri" data-wnav="1" title="次の人（→ / Enter）">次の人へ ▶</button>
     </div>`;
 }
-function setCell(s, c, ok) { if (ok) s.ok[c.dataset.k] = 1; else delete s.ok[c.dataset.k]; c.classList.toggle('x', !ok); c.textContent = ok ? '○' : '×'; }
+function setCell(s, c, ok) { if (ok) s.ok[c.dataset.k] = 1; else delete s.ok[c.dataset.k]; c.classList.toggle('x', !ok); c.textContent = ok ? '○' : '×'; replay(c, 'pop'); }
 let paint = null, lastPtr = 'mouse';
 $('#wishList').addEventListener('click', e => { const b = e.target.closest('.sitem'); if (!b) return; wishId = b.dataset.id; renderWish(); });
 $('#wishMain').addEventListener('pointerdown', e => {
@@ -1107,6 +1169,7 @@ function placeAt(s, d, i, quiet) {
   out.forEach(id => delete S.assign[id]);
   S.assign[s.id] = { dayId: d.id, t: S.slots[i], lock: true };
   save(); renderPlan();
+  const dec = $(`[data-undec="${s.id}"]`); if (dec) replay(dec.closest('.dec'), 'flash');
   if (!quiet) toast(`${s.name}を ${dayLabel(d.date)} ${tLabel(S.slots[i])}～ に決めました` + (out.length ? `（${out.map(id => SB[id].name).join('、')}は未定にもどしました）` : ''));
 }
 $('#planList').addEventListener('click', e => { const it = e.target.closest('[data-sid]'); if (!it) return; selId = selId === it.dataset.sid ? null : it.dataset.sid; renderPlan(); });
