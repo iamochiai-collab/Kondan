@@ -18,7 +18,7 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
-body{background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55;display:flex;flex-direction:column}
+body{background:var(--bg);color:var(--ink);font-size:15.5px;line-height:1.6;display:flex;flex-direction:column}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 [hidden]{display:none!important}
@@ -37,18 +37,31 @@ mark{background:var(--hl);color:inherit;padding:0 1px}
 .tools{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
 .tools .btn{padding:5px 12px;font-size:13px}
 
-.steps{display:flex;gap:8px;padding:10px 18px;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
-.steps button{flex:1;min-width:120px;border:1px solid var(--line);background:#fffaf5;border-radius:999px;padding:6px 8px;display:flex;align-items:center;gap:8px;white-space:nowrap;color:var(--sub)}
-.steps button i{font-style:normal;width:24px;height:24px;border-radius:50%;background:#f3e6da;display:grid;place-items:center;font-weight:700;flex:none}
+.steps{display:flex;gap:6px;padding:10px 18px 12px;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto;box-shadow:0 2px 6px rgba(120,80,40,.05)}
+.steps button{flex:1;min-width:150px;border:1px solid var(--line);background:#fffaf5;border-radius:16px;padding:7px 12px;display:flex;align-items:center;gap:10px;white-space:nowrap;color:var(--sub);text-align:left;position:relative;transition:background .15s,border-color .15s}
+.steps button:hover{border-color:#f0c4a6}
+.steps button:not(:last-child)::after{content:"";position:absolute;right:-6px;top:50%;width:6px;height:2px;background:var(--line)}
+.steps .sl{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.steps .sl b{font-size:14px}
+.steps .sl small{font-size:11.5px;color:var(--sub);font-weight:400;overflow:hidden;text-overflow:ellipsis}
+.steps button.done .sl small{color:var(--ok)}
+.steps button i{font-style:normal;width:28px;height:28px;font-size:14px;border-radius:50%;background:#f3e6da;display:grid;place-items:center;font-weight:700;flex:none}
 .steps button.on{border-color:var(--pri);background:var(--pri-l);color:var(--ink);font-weight:700}
 .steps button.on i{background:var(--pri);color:#fff}
 .steps button.done i{background:var(--ok);color:#fff}
 
-main{flex:1;overflow:auto;padding:16px}
+main{flex:1;overflow:auto;padding:18px 18px 28px}
+.nextbar{max-width:1100px;margin:0 auto 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid #f3d3bc;border-left:6px solid var(--pri);border-radius:14px;padding:10px 14px;box-shadow:0 2px 0 #f3e8dc}
+.nextbar.ok{border-color:#bfe3cc;border-left-color:var(--ok)}
+.nextbar .ic{font-size:22px;line-height:1}
+.nextbar .tx{flex:1;min-width:200px}
+.nextbar .tx b{display:block;font-size:15.5px}
+.nextbar .tx span{font-size:13px;color:var(--sub)}
+.nextbar.wide{max-width:none}
 .page{max-width:1100px;margin:0 auto}
 .page.wide{max-width:none}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 0 #f3e8dc}
-h2{font-size:19px;margin:0 0 6px}
+h2{font-size:20px;margin:0 0 6px;letter-spacing:.02em}
 h3{font-size:16px;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
 .hint{color:var(--sub);font-size:13px;margin:4px 0 10px}
 .empty{color:var(--sub);padding:18px;text-align:center;background:#fffaf5;border-radius:14px}
@@ -134,10 +147,19 @@ table.ntab{width:100%;border-collapse:collapse;min-width:640px}
 .whead select{font-size:17px;font-weight:700;min-width:200px}
 .legend{display:flex;gap:10px;font-size:12px;color:var(--sub);flex-wrap:wrap}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:3px}
-.wgrid{display:grid;gap:3px;margin:10px 0;user-select:none;overflow-x:auto}
-.wgrid .ch{border:0;background:#fff3e9;border-radius:10px;padding:4px;font-weight:700;font-size:13px}
-.wgrid .rh{border:0;background:none;font-size:14px;text-align:right;padding:0 8px;font-weight:700;font-variant-numeric:tabular-nums}
-.wc{border:1px solid #bfe3cc;background:var(--ok-l);border-radius:10px;height:36px;font-weight:700;font-size:17px;color:var(--ok);touch-action:manipulation}
+.wgrid{display:grid;gap:4px;margin:12px 0;user-select:none;overflow-x:auto}
+.wc:active{transform:scale(.96)}
+.wc.x{font-weight:400}
+.whero{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.whero .wno{font-size:15px;font-weight:700;color:#fff;background:var(--pri);border-radius:12px;min-width:44px;height:44px;display:grid;place-items:center;padding:0 8px}
+.whero .wnm{font-size:28px;font-weight:700;letter-spacing:.04em}
+.whero .wpos{font-size:13px;color:var(--sub)}
+.whero .wst{font-size:13px;font-weight:700}
+kbd{font-family:inherit;font-size:11.5px;border:1px solid #e6d5c4;border-bottom-width:2px;border-radius:5px;padding:0 5px;background:#fff}
+.wgrid .ch{border:0;background:#fff3e9;border-radius:10px;padding:6px 4px;font-weight:700;font-size:14px}
+.wgrid .ch:hover,.wgrid .rh:hover{background:#ffe6d4}
+.wgrid .rh{border:0;background:none;border-radius:10px;font-size:15px;text-align:right;padding:0 8px;font-weight:700;font-variant-numeric:tabular-nums}
+.wc{border:1px solid #bfe3cc;background:var(--ok-l);border-radius:12px;height:46px;font-weight:700;font-size:21px;transition:transform .05s;color:var(--ok);touch-action:manipulation}
 .wc.x{background:var(--ng-l);border-color:#f2c4c4;color:var(--ng)}
 .wc.cl{background:#f1ece6;border-color:#e2d8cd;color:#b5a89d;cursor:default}
 .wc.sib{outline:2px dashed #8f6cc9;outline-offset:-4px}
@@ -303,14 +325,15 @@ footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
   </div>
 </header>
 <nav class="steps" id="steps">
-  <button data-go="1"><i>1</i>名前と先生</button>
-  <button data-go="2"><i>2</i>日にちと時間帯</button>
-  <button data-go="3"><i>3</i>希望の入力</button>
-  <button data-go="4"><i>4</i>日程の調整</button>
-  <button data-go="5"><i>5</i>印刷・保存</button>
+  <button data-go="1"><i>1</i><span class="sl"><b>名前と先生</b><small id="st1"></small></span></button>
+  <button data-go="2"><i>2</i><span class="sl"><b>日にちと時間帯</b><small id="st2"></small></span></button>
+  <button data-go="3"><i>3</i><span class="sl"><b>希望の入力</b><small id="st3"></small></span></button>
+  <button data-go="4"><i>4</i><span class="sl"><b>日程の調整</b><small id="st4"></small></span></button>
+  <button data-go="5"><i>5</i><span class="sl"><b>印刷・保存</b><small id="st5"></small></span></button>
 </nav>
 
 <main id="main">
+<div id="nextBar" class="nextbar" hidden></div>
 <!-- 1 -->
 <section class="page" data-p="1">
   <div class="card">
@@ -490,6 +513,15 @@ $('#modal').addEventListener('click', e => {
 });
 $('#modal').addEventListener('change', e => { if (MC && MC.opt.onChange) MC.opt.onChange(e); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && MC) closeDlg(null); });
+document.addEventListener('keydown', e => {   // 希望の入力：← → Enter で人を移動
+  if (MC || page !== 3 || wishView !== 'one' || e.ctrlKey || e.metaKey || e.altKey) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
+  const d = e.key === 'ArrowRight' || e.key === 'Enter' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (!d) return;
+  e.preventDefault(); const k = S.students.findIndex(x => x.id === wishId) + d;
+  if (k >= 0 && k < S.students.length) { wishId = S.students[k].id; renderWish(); const on = $('#wishList .sitem.on'); if (on) on.scrollIntoView({ block: 'nearest' }); }
+  else toast(k < 0 ? '最初の人です' : '最後の人です');
+});
 const confirmDlg = (html, ok, danger) => dlg(html, [{ label: 'やめる', value: false }, { label: ok || 'OK', cls: danger ? 'pri danger' : 'pri', value: true }]);
 
 /* ========== データ ========== */
@@ -533,7 +565,7 @@ function save() {
   reindex(); persist();
   const j = JSON.stringify(S);
   if (j !== lastSnap) { hist.push(lastSnap); if (hist.length > 80) hist.shift(); fut = []; lastSnap = j; }
-  updHist();
+  updHist(); if ($('#st1')) stepStatus();
 }
 function updHist() { $('#undoBtn').disabled = !hist.length; $('#redoBtn').disabled = !fut.length; }
 function jump(dir) {
@@ -676,14 +708,48 @@ function go(p) { page = p; selId = null; render(); $('#main').scrollTop = 0; }
 function render() {
   reindex();
   $$('.page').forEach(el => el.hidden = +el.dataset.p !== page);
-  const L = S.students;
-  const doneStep = { 1: L.length > 0, 2: S.days.length > 0 && NS() > 0, 3: L.length > 0 && L.every(s => s.done), 4: L.length > 0 && L.every(s => S.assign[s.id]), 5: false };
-  $$('#steps button').forEach(b => { const n = +b.dataset.go; b.classList.toggle('on', n === page); b.classList.toggle('done', n !== page && doneStep[n]); });
+  $$('#steps button').forEach(b => b.classList.toggle('on', +b.dataset.go === page));
   $$('#kindSw button').forEach(b => b.classList.toggle('on', b.dataset.kind === S.kind));
   $('#clsTxt').textContent = P.cls || 'クラス名を入れる';
-  updHist();
+  stepStatus(); updHist();
   ({ 1: renderNames, 2: renderDays, 3: renderWish, 4: renderPlan, 5: renderOut })[page]();
 }
+function stepStatus() {
+  const L = S.students, nd = L.filter(s => s.done).length, np = L.filter(s => S.assign[s.id]).length, cap = S.days.reduce((n, d) => n + S.slots.filter(t => !isClosed(d.id, t)).length, 0);
+  const doneStep = { 1: L.length > 0, 2: S.days.length > 0 && NS() > 0, 3: L.length > 0 && nd === L.length, 4: L.length > 0 && np === L.length, 5: false };
+  $$('#steps button').forEach(b => b.classList.toggle('done', +b.dataset.go !== page && doneStep[+b.dataset.go]));
+  $('#st1').textContent = L.length ? `${L.length}人` : 'まだ';
+  $('#st2').textContent = S.days.length && NS() ? `${S.days.length}日・${cap}枠` : 'まだ';
+  $('#st3').textContent = L.length ? `受け取り ${nd}/${L.length}` : '—';
+  $('#st4').textContent = L.length ? `決まった ${np}/${L.length}` : '—';
+  $('#st5').textContent = np ? '日程表・お知らせ' : '—';
+  renderNext(L, nd, np, cap);
+}
+function renderNext(L, nd, np, cap) {   // 次にやることを上に出す
+  let ic = '👉', t = '', sub = '', btn = '', ok = false;
+  if (page === 1) {
+    if (!L.length) { t = 'まず、クラス名・先生・名前を入れましょう'; sub = '名前はExcelから貼り付けることもできます'; }
+    else { ok = true; ic = '✅'; t = `${L.length}人を登録しました`; sub = '同席する先生も選べたら、次へ進みます'; btn = '<button class="btn pri" data-go="2">次へ：日にちと時間帯 →</button>'; }
+  } else if (page === 2) {
+    if (!S.days.length || !NS()) { t = '日にちと時間帯を入れましょう'; }
+    else { ok = cap >= L.length; ic = ok ? '✅' : '⚠️'; t = `${S.days.length}日・${cap}枠（${L.length}人分が必要）`; sub = ok ? '会議などで入れない時間は「ー」にしておきます' : '枠が足りません。日にちか時間帯をふやしてください'; btn = '<button class="btn pri" data-go="3">次へ：希望の入力 →</button>'; }
+  } else if (page === 3) {
+    if (!L.length) { t = '先に名前を登録してください'; btn = '<button class="btn" data-go="1">1. 名前と先生へ</button>'; }
+    else if (nd < L.length) { t = `あと ${L.length - nd}人の希望が入っていません`; sub = `受け取った ${nd}/${L.length}人`; btn = '<button class="btn" id="nbNext">まだの人へ</button>'; }
+    else { ok = true; ic = '🎉'; t = '全員の希望がそろいました'; sub = '次は、日程を決めます'; btn = '<button class="btn pri" data-go="4">次へ：日程の調整 →</button>'; }
+  } else if (page === 4) {
+    if (!L.length) { t = '先に名前を登録してください'; }
+    else if (np < L.length) { t = np ? `あと ${L.length - np}人が決まっていません` : '「⚡ 自動で入れる」を押すと、全員の日程を考えます'; sub = np ? '表の緑の名前を押すか、もう一度「自動で入れる」を押します' : 'そのあと、表の名前を押して手直しできます'; btn = '<button class="btn pri" id="nbAuto">⚡ 自動で入れる</button>'; }
+    else { ok = true; ic = '🎉'; t = '全員の日程が決まりました'; sub = '日程表とお知らせを出しましょう'; btn = '<button class="btn pri" data-go="5">次へ：印刷・保存 →</button>'; }
+  }
+  const nb = $('#nextBar'); nb.hidden = !t; if (!t) return;
+  nb.className = 'nextbar' + (ok ? ' ok' : '') + (page >= 3 ? ' wide' : '');
+  nb.innerHTML = `<span class="ic">${ic}</span><div class="tx"><b>${t}</b>${sub ? `<span>${sub}</span>` : ''}</div>${btn}`;
+}
+$('#nextBar').addEventListener('click', e => {
+  if (e.target.id === 'nbAuto') $('#autoBtn').click();
+  if (e.target.id === 'nbNext') { wishView = 'one'; const x = S.students.find(s => !s.done); if (x) { wishId = x.id; renderWish(); render(); } }
+});
 document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g && !g.closest('#modal')) go(+g.dataset.go); });
 $('#kindSw').addEventListener('click', e => {
   const b = e.target.closest('[data-kind]'); if (!b || b.dataset.kind === S.kind) return;
@@ -840,37 +906,41 @@ function renderWishMain() {
   const s = SB[wishId]; if (!s) return;
   const a = S.assign[s.id], fixDay = a && a.lock ? a.dayId : '';
   const nsib = s.sibs.length + (s.pair && SB[s.pair] ? 1 : 0);
-  let g = `<div class="wgrid" id="wGrid" style="grid-template-columns:76px repeat(${S.days.length}, minmax(80px,1fr))"><span></span>`;
+  let g = `<div class="wgrid" id="wGrid" style="grid-template-columns:84px repeat(${S.days.length}, minmax(96px,1fr))"><span></span>`;
   g += S.days.map(d => `<button class="ch" data-wday="${d.id}">${esc(dayLabel(d.date))}</button>`).join('');
   S.slots.forEach(t => {
     g += `<button class="rh" data-wrow="${t}">${tLabel(t)}～</button>`;
     S.days.forEach(d => {
       if (isClosed(d.id, t)) { g += '<span class="wc cl" style="display:grid;place-items:center">ー</span>'; return; }
       const x = !s.ok[K(d.id, t)], sib = s.sibs.some(b => b.dayId === d.id && b.t === t);
-      g += `<button class="wc ${x ? 'x' : ''} ${sib ? 'sib' : ''}" data-k="${K(d.id, t)}" title="${sib ? 'きょうだいの' + kw() : ''}">${x ? '×' : '○'}</button>`;
+      g += `<button class="wc ${x ? 'x' : ''} ${sib ? 'sib' : ''}" aria-label="${esc(dayLabel(d.date))} ${tLabel(t)}～ ${x ? '×' : '○'}" data-k="${K(d.id, t)}" title="${sib ? 'きょうだいの' + kw() : ''}">${x ? '×' : '○'}</button>`;
     });
   });
   g += '</div>';
   $('#wishMain').innerHTML = `
-    <div class="whead">
-      <button class="btn sm" data-wnav="-1">◀</button>
-      <select id="wSel">${S.students.map(x => `<option value="${x.id}" ${x.id === s.id ? 'selected' : ''}>${esc(x.no)}　${esc(x.name || '名前なし')}</option>`).join('')}</select>
-      <button class="btn sm" data-wnav="1">▶</button>
+    <div class="whero">
+      <button class="btn" data-wnav="-1" title="前の人（←）">◀</button>
+      <span class="wno">${esc(s.no || '-')}</span><span class="wnm">${esc(s.name || '名前なし')}</span>
+      <span class="wpos">${S.students.indexOf(s) + 1} / ${S.students.length}人目</span>
+      <span class="wst" style="color:${s.done ? 'var(--ok)' : 'var(--warn)'}">${s.done ? `✓ 入力ずみ（○ ${S.days.reduce((n, d) => n + S.slots.filter(t => s.ok[K(d.id, t)] && !isClosed(d.id, t)).length, 0)}こ）` : 'まだ入力していません'}</span>
+      <span class="sp"></span>
+      <select id="wSel" title="人をえらぶ">${S.students.map(x => `<option value="${x.id}" ${x.id === s.id ? 'selected' : ''}>${esc(x.no)}　${esc(x.name || '名前なし')}${x.done ? '　✓' : ''}</option>`).join('')}</select>
       <button class="btn sm" id="wNext">まだの人へ</button>
     </div>
     <div class="row">
       <label class="chk"><input type="checkbox" id="wDone" ${s.done ? 'checked' : ''}>希望を受け取った</label>
+      <button class="btn sm" id="wCopy" ${S.students.indexOf(s) > 0 ? '' : 'disabled'} title="ひとつ前の人の○×を写します">前の人と同じにする</button>
       <span class="sp"></span>
       <span class="legend"><span><i style="background:var(--ok-l);border:1px solid #bfe3cc"></i>○ 来られる</span><span><i style="background:var(--ng-l);border:1px solid #f2c4c4"></i>× 来られない</span><span><i style="background:#f1ece6"></i>ー 使わない時間</span></span>
       <button class="btn sm" data-wall="0">ぜんぶ○</button><button class="btn sm" data-wall="1">ぜんぶ×</button>
     </div>
-    ${g}<p class="hint">最初はぜんぶ×です。来られる時間帯のマスを押して○にします（なぞってもOK）。日にち・時間帯を押すと、その列・行をまとめて○にできます。</p>
+    ${g}<p class="hint">最初はぜんぶ×です。来られる時間帯のマスを押して○にします（なぞってもOK）。日にち・時間帯を押すと、その列・行をまとめて○にできます。キーボードの <kbd>←</kbd><kbd>→</kbd> で前後の人、<kbd>Enter</kbd> で次の人へ。</p>
     <div class="wbar">
       <label class="wb"><span>${kw()}の長さ</span><select id="wDur">${[1, 2, 3].map(m => `<option value="${m}" ${multOf(s) === m ? 'selected' : ''}>${m}コマ${m === 1 ? '（ふつう）' : '続けて'}</option>`).join('')}</select></label>
       <label class="wb"><span>時刻の指定</span><span class="row" style="gap:4px"><select id="wFixDay"><option value="">しない</option>${S.days.map(d => `<option value="${d.id}" ${fixDay === d.id ? 'selected' : ''}>${esc(dayLabel(d.date))}</option>`).join('')}</select>${fixDay ? `<select id="wFixTime">${S.slots.map(t => `<option value="${t}" ${a.t === t ? 'selected' : ''}>${tLabel(t)}～</option>`).join('')}</select>` : ''}</span></label>
       <button class="btn wpop ${nsib ? 'has' : ''}" id="sibBtn"><span>きょうだい</span><b>${nsib ? esc(sibShort(s)) : 'なし'}</b></button>
       <span class="sp"></span>
-      <button class="btn pri" data-wnav="1">次の人へ ▶</button>
+      <button class="btn pri" data-wnav="1" title="次の人（→ / Enter）">次の人へ ▶</button>
     </div>`;
 }
 function setCell(s, c, ok) { if (ok) s.ok[c.dataset.k] = 1; else delete s.ok[c.dataset.k]; c.classList.toggle('x', !ok); c.textContent = ok ? '○' : '×'; }
@@ -895,6 +965,10 @@ $('#wishMain').addEventListener('click', e => {
   const wd = e.target.closest('[data-wday]'); if (wd) { flip($$('#wGrid button.wc').filter(x => x.dataset.k.startsWith(wd.dataset.wday + '|'))); return; }
   const wa = e.target.closest('[data-wall]');
   if (wa) { s.ok = {}; if (wa.dataset.wall === '0') S.days.forEach(d => S.slots.forEach(t => s.ok[K(d.id, t)] = 1)); s.done = true; save(); renderWish(); return; }
+  if (e.target.id === 'wCopy') {
+    const k = S.students.indexOf(s), pv = S.students[k - 1]; if (!pv) return;
+    s.ok = Object.assign({}, pv.ok); s.done = true; save(); renderWish(); toast(`${pv.name}と同じ○×にしました`); return;
+  }
   if (e.target.id === 'wNext') {
     const L = S.students, k0 = L.findIndex(x => x.id === s.id);
     for (let q = 1; q <= L.length; q++) { const x = L[(k0 + q) % L.length]; if (!x.done) { wishId = x.id; renderWish(); return; } }
@@ -993,8 +1067,8 @@ function renderPlan() {
   const done = placed.length;
   $('#planProg').innerHTML = L.length ? `<span>決まった人 <b>${done}</b>/${L.length}</span><div class="bar"><i style="width:${done / L.length * 100}%"></i></div>${done === L.length ? '<span class="tag ok">全員決まりました</span>' : ''}` : '';
   $('#planHint').innerHTML = sel
-    ? `<b>${esc(sel.name)}</b>：緑のマスは、この人が○の時間帯です。マスの中の名前を押すと決まります。<span class="sp"></span><button class="btn sm" id="unsel">選ぶのをやめる</button>`
-    : 'マスの中の<b style="color:#2f6e4a">緑の名前</b>は、その時間帯に○で、まだ決まっていない人です。押すと、その人に決まります（<mark>黄色</mark>）。決まった人を動かすときは、左の名前を押してから緑のマスの名前を押します。';
+    ? `<span><b>${esc(sel.name)}</b>：緑のマスは、この人が○の時間帯です。マスの中の名前を押すと決まります。</span><span class="sp"></span><button class="btn sm" id="unsel">選ぶのをやめる</button>`
+    : '<span>マスの中の<b style="color:#2f6e4a">緑の名前</b>は、その時間帯に○で、まだ決まっていない人です。押すと、その人に決まります（<mark>黄色</mark>）。決まった人を動かすときは、左の名前を押してから緑のマスの名前を押します。</span>';
   $('#planHint').insertAdjacentHTML('beforeend', `<span class="sp"></span><label class="chk"><input type="checkbox" id="showPlaced" ${showPlaced ? 'checked' : ''}>決まった人の名前も出す</label>`);
   const time = (x, y) => { const a = S.assign[x.id], b = S.assign[y.id]; return S.days.findIndex(d => d.id === a.dayId) - S.days.findIndex(d => d.id === b.dayId) || aIdx(a) - aIdx(b); };
   const item = s => `<button class="sitem ${selId === s.id ? 'on' : ''}" data-sid="${s.id}"><span class="n">${esc(s.no)}</span><span class="nm">${esc(s.name || '名前なし')}</span><span class="when">${S.assign[s.id] ? esc(whenShort(s)) + (S.assign[s.id].lock ? '' : ' ⚡') : (s.done ? '○' + okCells(s) : '希望まだ')}</span></button>`;
