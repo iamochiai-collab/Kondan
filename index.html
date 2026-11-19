@@ -383,6 +383,14 @@ footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
 .empty .ico{display:block;width:76px;height:76px;margin:0 auto 6px;opacity:.9}
 .dlgh{display:flex;align-items:center;gap:8px}
 .dlgh .ico{width:40px;height:40px}
+
+.help h3{margin:18px 0 6px;font-size:17px}
+.help h3 .ico{width:36px;height:36px}
+.help ul{margin:4px 0 8px;padding-left:1.3em}
+.help li{margin:3px 0}
+.help .safe{background:var(--pri-l);border:1.5px solid var(--pri);border-radius:14px;padding:12px 16px;margin-top:8px}
+.help .safe h3{margin-top:0}
+.help .lead{font-size:15px;margin:0 0 6px}
 </style>
 </head>
 <body>
@@ -393,6 +401,7 @@ footer{text-align:center;color:var(--sub);font-size:12px;padding:6px}
   <div class="tools">
     <button class="btn" id="undoBtn" title="ひとつ前にもどす">↶ もどす</button>
     <button class="btn" id="redoBtn" title="ひとつ先にすすめる">↷ すすむ</button>
+    <button class="btn" id="helpBtn"><i class="ico bi i0"></i>使い方</button>
     <button class="btn" id="fileBtn"><i class="ico bi x-folder"></i>保存・読み込み</button>
     <button class="btn danger" id="resetBtn"><i class="ico bi x-eraser"></i>リセット</button>
   </div>
@@ -830,7 +839,7 @@ function stepStatus() {
 function renderNext(L, nd, np, cap) {   // 次にやることを上に出す
   let ic = 'x-point', t = '', sub = '', btn = '', ok = false;
   if (page === 1) {
-    if (!L.length) { t = 'まず、クラス名・先生・児童生徒の名前を入れましょう'; sub = '名前はExcelから貼り付けることもできます'; }
+    if (!L.length) { t = 'まず、クラス名・先生・児童生徒の名前を入れましょう'; sub = 'はじめての方は、右上の「使い方」をご覧ください。入力した内容はこのブラウザの中だけに保存されます'; btn = '<button class="btn" id="nbHelp">使い方を見る</button>'; }
     else { ok = true; ic = 'i0'; t = `${L.length}人を登録しました`; sub = '同席する先生も選べたら、次へ進みます'; btn = '<button class="btn pri" data-go="2">次へ：日にちと時間帯 →</button>'; }
   } else if (page === 2) {
     if (!S.days.length || !NS()) { t = '日にちと時間帯を入れましょう'; }
@@ -851,6 +860,7 @@ function renderNext(L, nd, np, cap) {   // 次にやることを上に出す
 }
 $('#nextBar').addEventListener('click', e => {
   if (e.target.id === 'nbAuto') $('#autoBtn').click();
+  if (e.target.id === 'nbHelp') $('#helpBtn').click();
   if (e.target.id === 'nbNext') { wishView = 'one'; const x = S.students.find(s => !s.done); if (x) { wishId = x.id; renderWish(); render(); } }
 });
 document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g && !g.closest('#modal')) go(+g.dataset.go); });
@@ -881,6 +891,42 @@ $('#resetBtn').onclick = async () => {
     wishId = null; selId = null; go(1); updHist(); toast('ぜんぶ消しました');
   }
 };
+const HELP_HTML = `<div class="help">
+  <h3 style="margin-top:0" class="dlgh"><i class="ico i0"></i>面談日程づくりの使い方</h3>
+  <p class="lead">家庭訪問・個別懇談の日程を、保護者の希望（○×）から決めて、日程表と連絡帳用のお知らせを作るアプリです。上の1〜5の順に進めます。</p>
+  <div class="safe"><h3 class="dlgh"><i class="ico x-folder"></i>個人情報について</h3><ul>
+    <li><b>このアプリは、ブラウザの中だけで動きます。</b>入力した名前や希望は、いま使っているパソコンのブラウザの中にだけ保存されます。</li>
+    <li>インターネット上（サーバーやクラウド）には<b>送られません</b>。アプリを作った人を含め、ほかの人が見ることはできません。</li>
+    <li>文字の形や、PDFを作るための部品を読み込むときだけインターネットにつながりますが、入力した内容は送りません。</li>
+    <li>共用のパソコンでは、使い終わったら右上の「リセット」→「ぜんぶ消す」で消してください。</li>
+    <li>「保存・読み込み」で作ったファイルや、印刷・PDF・Wordは、ふつうの書類と同じように、校内の決まりにそって扱ってください。</li></ul></div>
+  <h3 class="dlgh"><i class="ico i1"></i>1. 名前と先生</h3><ul>
+    <li>クラス名（例：1年1組）と、先生の名前（名字だけでOK）を入れます。</li>
+    <li>児童生徒の名前を1行に1人ずつ入れて「まとめて追加」。Excelの「番号」「名前」の列を貼り付けることもできます。</li>
+    <li>一覧の右側で「主に話す先生」と「同席する先生」を選びます。</li></ul>
+  <h3 class="dlgh"><i class="ico i2"></i>2. 日にちと時間帯</h3><ul>
+    <li>題名（個別懇談・家庭訪問など）と、日にちを入れます。</li>
+    <li>時間帯は、最初は13:00～16:30（30分ごと）が入っています。「まとめて作る」で15分ごとなどに作り直せます。</li>
+    <li>会議などで入れない時間は、下の表で「ー」にします。</li></ul>
+  <h3 class="dlgh"><i class="ico i3"></i>3. 希望の入力</h3><ul>
+    <li>最初はぜんぶ×です。保護者が来られる時間帯のマスを押して○にします（なぞってもOK）。</li>
+    <li>キーボードの ← → で前後の人へ、Enter で次の人へ。「前の人と同じにする」も使えます。</li>
+    <li>「全員の○×」では、クラス全員の希望を1枚の表で見たり、直したりできます。</li>
+    <li>きょうだいがいる人、2コマ続けてとりたい人、時刻が決まっている人は、下の欄で設定します。</li></ul>
+  <h3 class="dlgh"><i class="ico i4"></i>4. 日程の調整</h3><ul>
+    <li>「自動で入れる」を押すと、希望・きょうだい・使わない時間を考えて、全員の日程を入れます。</li>
+    <li>表のマスの緑の名前は、その時間帯に○の人です。押すと、その人に決まります。</li>
+    <li>マスの「＋」から、×の時間帯に入れることもできます。</li>
+    <li><i class="ico mi x-wand"></i>は自動で入れた人、<i class="ico mi x-pin"></i>は手で決めた人です。手で決めた人は、自動で入れ直しても動きません。</li></ul>
+  <h3 class="dlgh"><i class="ico i5"></i>5. 印刷・保存</h3><ul>
+    <li><b>日程表と希望の集約表</b>：先生用の表です（白黒・教科書体）。</li>
+    <li><b>保護者へのお知らせ</b>：A4に8人分。切って連絡帳に貼ります。文面は画面で直せます（個別懇談・家庭訪問で別々）。</li>
+    <li>「印刷ページを開く」から印刷できます。印刷の画面で「PDFに保存」も選べます。Word・Excelでも出せます。</li></ul>
+  <h3 class="dlgh"><i class="ico x-point"></i>こまったときは</h3><ul>
+    <li>まちがえたときは、右上の「もどす」で、ひとつ前にもどせます。</li>
+    <li>別のパソコンで続けるときは「保存・読み込み」でファイルに保存して、そのファイルを読み込みます。</li></ul>
+</div>`;
+$('#helpBtn').onclick = () => dlg(HELP_HTML, [{ label: 'とじる', cls: 'pri', value: 1 }], { wide: true });
 function fileBase() { return [P.cls, S.title || TITLE[S.kind]].filter(Boolean).join('_') || '面談日程'; }
 $('#fileBtn').onclick = async () => {
   const v = await dlg(`<h3 style="margin-top:0" class="dlgh"><i class="ico x-folder"></i>保存・読み込み</h3><p class="hint">入力した内容は、このブラウザに自動で保存されています。別のパソコンで続けるときや、念のため残しておくときはファイルにします。</p>`,
